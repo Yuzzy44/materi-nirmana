@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nirmana — Belajar Dasar Desain</title>
+<style>
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 16px)}
+html[data-theme="dark"]{background:#1b2140;color-scheme:dark}
+html[data-theme="light"]{background:#f4efe6;color-scheme:light}
+body{margin:0}
+.view[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+</head>
+<body>
+<div id="app"></div>
+
+<template id="tpl-beranda">
+<style>
+
+:host{
+  box-sizing:border-box;;
+  --bg1:#f4efe6;--bg2:#e9dfc6;--bg3:#f3d9c8;
+  --glass:rgba(255,252,246,.62);--glass-b:rgba(255,255,255,.85);
+  --text:#1e1a17;--muted:#6b625a;--btn:#1e1a17;--btn-t:#f4efe6;--chip:rgba(60,50,42,.6);
+  --tile:#fffdf8;
+}
+@media (prefers-color-scheme:dark){:host(:not([data-theme="light"])){
+  --bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--glass-b:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--btn-t:#111;--chip:rgba(255,255,255,.2);--tile:#262b40;color-scheme:dark}}
+:host([data-theme="dark"]){
+  --bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--glass-b:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--btn-t:#111;--chip:rgba(255,255,255,.2);--tile:#262b40;color-scheme:dark}
+*{box-sizing:border-box}
+.page{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:radial-gradient(circle at 15% 20%,var(--bg3),transparent 45%),radial-gradient(circle at 85% 80%,var(--bg2),transparent 50%),var(--bg1);
+  background-attachment:fixed;padding:20px 16px 40px}
+.shell{max-width:1000px;margin:0 auto;background:var(--glass);border:1px solid var(--glass-b);border-radius:28px;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);padding:20px;box-shadow:0 20px 60px rgba(40,50,90,.15)}
+nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-weight:700;display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#e63946,#ffb703,#2a9d8f,#1d3557,#e63946)}
+nav a{color:var(--text);text-decoration:none;font-size:14px;opacity:.85}
+nav a:hover{opacity:1}
+.btn{font:inherit;font-size:14px;border-radius:999px;padding:9px 18px;border:1px solid var(--text);background:transparent;color:var(--text);cursor:pointer}
+.btn.fill{background:var(--btn);color:var(--btn-t);border-color:var(--btn)}
+.hero{padding:44px 8px 28px;text-align:center}
+.hero h1{font-size:clamp(28px,5vw,46px);margin:0 0 12px;letter-spacing:-.02em}
+.hero p{color:var(--muted);max-width:520px;margin:0 auto 22px;line-height:1.6}
+.hero .btn{margin:4px}
+.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;background:var(--glass);border:1px solid var(--glass-b);border-radius:20px;padding:10px 14px;margin:8px 0 18px}
+.bar button.tab{font:inherit;font-size:13px;border:0;background:transparent;color:var(--muted);padding:7px 14px;border-radius:999px;cursor:pointer}
+.bar button.tab[aria-pressed="true"]{background:var(--btn);color:var(--btn-t)}
+.bar input{margin-left:auto;font:inherit;font-size:13px;border:1px solid var(--glass-b);background:var(--glass);color:var(--text);border-radius:999px;padding:8px 14px;min-width:0;width:170px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;padding:16px;border:1px solid var(--glass-b);border-radius:24px}
+.card{position:relative;border-radius:22px;padding:18px;border:1px solid var(--glass-b);
+  background:linear-gradient(135deg,var(--c),transparent 85%),var(--glass);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  transition:transform .2s}
+.card:hover{transform:translateY(-4px)}
+.card[hidden]{display:none}
+.tiles{display:flex;gap:8px;margin-bottom:22px}
+.tile{width:46px;height:40px;border-radius:12px;background:var(--tile);display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.tile svg{width:22px;height:22px}
+.card h3{margin:0 0 8px;font-size:21px}
+.card p{margin:0 0 38px;font-size:13px;line-height:1.55;color:var(--muted)}
+.chip{position:absolute;right:14px;bottom:14px;background:var(--chip);color:#fff;font-size:11px;padding:4px 10px;border-radius:999px}
+.mark{position:absolute;right:14px;top:14px;border:0;background:transparent;color:var(--muted);cursor:pointer;font-size:18px;line-height:1}
+.mark[aria-pressed="true"]{color:#e63946}
+.go{position:absolute;left:18px;bottom:14px;font-size:13px;font-weight:600;color:var(--text);text-decoration:none}
+.empty{display:none;text-align:center;color:var(--muted);padding:30px}
+footer{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:18px;font-size:12px;color:var(--muted)}
+footer .sp{margin-left:auto;display:flex;gap:10px}
+.toggle{width:36px;height:36px;padding:0;display:grid;place-items:center;font-size:15px}
+:host([data-theme="light"]) .card{background:linear-gradient(135deg,var(--lc,var(--c)),transparent 85%),var(--glass)}
+:host([data-theme="light"]) .grid>.card:nth-child(6n+1){--lc:rgba(233,169,138,.55)}
+:host([data-theme="light"]) .grid>.card:nth-child(6n+2){--lc:rgba(240,203,107,.55)}
+:host([data-theme="light"]) .grid>.card:nth-child(6n+3){--lc:rgba(190,196,132,.55)}
+:host([data-theme="light"]) .grid>.card:nth-child(6n+4){--lc:rgba(228,166,160,.55)}
+:host([data-theme="light"]) .grid>.card:nth-child(6n+5){--lc:rgba(214,196,170,.6)}
+:host([data-theme="light"]) .grid>.card:nth-child(6n+6){--lc:rgba(232,160,90,.5)}
+@media(max-width:560px){nav a{display:none}.bar input{width:100%;margin-left:0}}
+
+
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.logo[data-go]{cursor:pointer}
+.logo:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #d9482b;outline-offset:2px}
+
+.page{padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh}
+</style>
+<div class="page">
+<div class="shell">
+  <nav>
+    <span class="logo" data-go="beranda" role="link" tabindex="0"><i></i>Nirmana</span>
+    <a href="#beranda" data-go="beranda" data-sec="materi">Materi</a><a href="#beranda" data-go="beranda" data-sec="materi">Galeri</a><a href="#beranda" data-go="beranda" data-sec="tentang">Tentang</a>
+    <button class="btn toggle" id="theme" aria-label="Ganti tema">◐</button>
+    <button class="btn fill">Masuk</button>
+  </nav>
+
+  <section class="hero">
+    <h1>Belajar dasar desain,<br>selangkah demi selangkah</h1>
+    <p>Materi nirmana dwimatra dan trimatra: dari titik, garis, dan bidang sampai prinsip penyusunan karya.</p>
+    <a href="#materi" class="btn fill" style="text-decoration:none;display:inline-block">Mulai Belajar</a>
+    <button class="btn">Coba Kuis</button>
+  </section>
+
+  <div class="bar" id="materi">
+    <button class="tab" data-f="all" aria-pressed="true">Semua</button>
+    <button class="tab" data-f="2d" aria-pressed="false">Dwimatra (2D)</button>
+    <button class="tab" data-f="3d" aria-pressed="false">Trimatra (3D)</button>
+    <input type="search" id="q" placeholder="Cari materi…" aria-label="Cari materi">
+  </div>
+
+  <div class="grid" id="grid">
+    <article class="card" data-c="2d" style="--c:rgba(190,235,190,.55)">
+      <button class="mark" aria-pressed="false" aria-label="Simpan">♡</button>
+      <div class="tiles"><span class="tile"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5" fill="#2a9d8f"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><circle cx="6" cy="12" r="2" fill="#1d3557"/><circle cx="12" cy="12" r="3" fill="#1d3557"/><circle cx="19" cy="12" r="4" fill="#1d3557"/></svg></span></div>
+      <h3>Titik</h3><p>Unsur paling dasar: ukuran, posisi, dan kepadatan titik membentuk irama dan fokus.</p>
+      <a class="go" href="#titik" data-go="titik">Baca materi →</a><span class="chip">5 menit</span>
+    </article>
+    <article class="card" data-c="2d" style="--c:rgba(170,215,240,.6)">
+      <button class="mark" aria-pressed="false" aria-label="Simpan">♡</button>
+      <div class="tiles"><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 18L21 6" stroke="#1d3557" stroke-width="2.5" stroke-linecap="round"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 12q4-8 9 0t9 0" fill="none" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/></svg></span></div>
+      <h3>Garis</h3><p>Garis lurus, lengkung, dan putus-putus: menciptakan arah, gerak, dan kesan emosi.</p>
+      <a class="go" href="#garis" data-go="garis">Baca materi →</a><span class="chip">6 menit</span>
+    </article>
+    <article class="card" data-c="2d" style="--c:rgba(205,190,245,.6)">
+      <button class="mark" aria-pressed="false" aria-label="Simpan">♡</button>
+      <div class="tiles"><span class="tile"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="10" height="10" fill="#ffb703"/><circle cx="16" cy="16" r="5" fill="#e63946" opacity=".85"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><path d="M12 3l9 17H3z" fill="#1d3557"/></svg></span></div>
+      <h3>Bidang &amp; Bentuk</h3><p>Geometris, organik, dan abstrak: cara bidang saling mengisi dan membentuk komposisi.</p>
+      <a class="go" href="#bidang" data-go="bidang">Baca materi →</a><span class="chip">7 menit</span>
+    </article>
+    <article class="card" data-c="2d" style="--c:rgba(250,215,170,.65)">
+      <button class="mark" aria-pressed="false" aria-label="Simpan">♡</button>
+      <div class="tiles"><span class="tile"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="6" fill="#e63946" opacity=".85"/><circle cx="15" cy="9" r="6" fill="#ffb703" opacity=".85"/><circle cx="12" cy="15" r="6" fill="#1d3557" opacity=".85"/></svg></span></div>
+      <h3>Warna</h3><p>Hue, value, dan saturasi; skema monokrom, analogus, hingga komplementer.</p>
+      <a class="go" href="#warna" data-go="warna">Baca materi →</a><span class="chip">8 menit</span>
+    </article>
+    <article class="card" data-c="2d 3d" style="--c:rgba(180,230,215,.65)">
+      <button class="mark" aria-pressed="false" aria-label="Simpan">♡</button>
+      <div class="tiles"><span class="tile"><svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="#2a9d8f" stroke-width="2" stroke-dasharray="2 3"/></svg></span><span class="tile"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#2a9d8f" opacity=".35"/></svg></span></div>
+      <h3>Tekstur</h3><p>Tekstur nyata dan semu: cara permukaan memberi kesan kasar, halus, dan berlapis.</p>
+      <a class="go" href="#tekstur" data-go="tekstur">Baca materi →</a><span class="chip">6 menit</span>
+    </article>
+    <p class="empty" id="empty">Materi tidak ditemukan.</p>
+  </div>
+
+  <footer id="tentang">
+    <span>© 2026 Nirmana · Dibuat untuk belajar dasar desain</span>
+    <span class="sp"><a href="#" style="color:inherit">Bagikan</a><a href="#" data-top style="color:inherit">↑ Ke atas</a></span>
+  </footer>
+</div>
+</div>
+</template>
+<template id="tpl-titik">
+<style>
+
+:host{box-sizing:border-box;;
+  --bg1:#f4efe6;--bg2:#e9dfc6;--bg3:#f3d9c8;--glass:rgba(255,252,246,.62);--gb:rgba(255,255,255,.85);
+  --text:#1e1a17;--muted:#6b625a;--btn:#1e1a17;--bt:#f4efe6;--tile:#fffdf8;--fill:rgba(30,26,23,.07);--acc:#d9482b;--ta:.6}
+@media (prefers-color-scheme:dark){:host(:not([data-theme="light"])){
+  --bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}}
+:host([data-theme="dark"]){--bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}
+*{box-sizing:border-box}
+.page{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px 16px 40px;
+  background:radial-gradient(circle at 15% 20%,var(--bg3),transparent 45%),radial-gradient(circle at 85% 80%,var(--bg2),transparent 50%),var(--bg1);background-attachment:fixed}
+.shell{max-width:1000px;margin:0 auto;background:var(--glass);border:1px solid var(--gb);border-radius:28px;padding:20px;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 20px 60px rgba(40,50,90,.15)}
+nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-weight:700;display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#e63946,#ffb703,#2a9d8f,#1d3557,#e63946)}
+nav a{color:var(--text);text-decoration:none;font-size:14px;opacity:.85}
+.btn{font:inherit;font-size:14px;border-radius:999px;padding:9px 18px;border:1px solid var(--text);background:transparent;color:var(--text);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.fill{background:var(--btn);color:var(--bt);border-color:var(--btn)}
+.btn.sm{font-size:13px;padding:7px 14px}
+.tg{width:36px;height:36px;padding:0;display:grid;place-items:center}
+.crumb{font-size:13px;color:var(--muted);margin:22px 0 0}
+.crumb b{color:var(--text)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:center;padding:22px 4px 10px}
+.hero h1{font-size:clamp(34px,6vw,56px);margin:0 0 10px;letter-spacing:-.03em;line-height:1.05}
+.hero p{color:var(--muted);max-width:520px;line-height:1.6;margin:0 0 16px}
+.hero .vis svg{width:100%;display:block;color:var(--text)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--fill);border-radius:999px;font-size:12px;padding:4px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:180px 1fr;gap:20px;margin-top:22px;align-items:start}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--glass);border:1px solid var(--gb);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.toc h4{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.toc a{color:var(--muted);text-decoration:none;font-size:13px;padding:7px 10px;border-radius:10px}
+.toc a.on{background:var(--btn);color:var(--bt);font-weight:600}
+.sec{margin-bottom:34px;scroll-margin-top:16px}
+.sec>h2{font-size:26px;margin:0 0 6px;letter-spacing:-.02em;display:flex;gap:10px;align-items:baseline}
+.sec>h2 small{font-size:12px;color:var(--muted);font-weight:600}
+.sec>p{color:var(--muted);line-height:1.6;margin:0 0 14px;font-size:14px}
+.pan{border:1px solid var(--gb);border-radius:22px;padding:16px;background:var(--glass)}
+.g{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g.w{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{border-radius:20px;padding:14px;border:1px solid var(--gb);background:linear-gradient(135deg,rgba(var(--t),var(--ta)),transparent 85%),var(--glass)}
+.card b{display:block;font-size:16px}
+.card span{font-size:12px;color:var(--muted);line-height:1.4;display:block;margin-top:2px}
+.tile{background:var(--tile);border-radius:12px;padding:6px;margin-bottom:10px;color:var(--text)}
+.tile svg{width:100%;height:78px;display:block}
+.lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+.vis svg{width:100%;display:block;color:var(--text)}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;font-size:13px}
+.ctrl label,.ctrl div{display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.ctrl input[type=range]{width:100%;accent-color:var(--acc)}
+.out{margin-top:10px;font-size:14px}
+.out b{color:var(--acc)}
+.two{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.steps{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.step{background:var(--btn);color:var(--bt);border-radius:14px;padding:14px;font-weight:700;font-size:13px}
+.sm2{font-size:13px;color:var(--muted);line-height:1.55;margin:6px 0 0}
+.quote{font-size:clamp(20px,3.5vw,28px);font-weight:800;line-height:1.25;letter-spacing:-.02em;margin:0 0 6px}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--gb);padding:0;cursor:pointer}
+.sw.on{outline:2px solid var(--text);outline-offset:2px}
+.ref p{font-size:13px;color:var(--muted);line-height:1.55;margin:0 0 8px}
+.nav2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+footer{margin-top:18px;font-size:12px;color:var(--muted)}
+:host([data-theme="light"]) .card{background:linear-gradient(135deg,var(--lt,rgba(var(--t),var(--ta))),transparent 85%),var(--glass)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+1){--lt:rgba(233,169,138,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+2){--lt:rgba(240,203,107,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+3){--lt:rgba(190,196,132,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+4){--lt:rgba(228,166,160,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+5){--lt:rgba(214,196,170,.6)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+6){--lt:rgba(232,160,90,.5)}
+@media(max-width:760px){.layout,.hero{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto;align-items:center}.toc h4{display:none}.toc a{white-space:nowrap}nav a{display:none}}
+
+
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.logo[data-go]{cursor:pointer}
+.logo:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #d9482b;outline-offset:2px}
+
+.page{padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh}
+</style>
+<div class="page">
+<div class="shell">
+<nav>
+  <span class="logo" data-go="beranda" role="link" tabindex="0"><i></i>Nirmana</span>
+  <a href="#beranda" data-go="beranda" data-sec="materi">Materi</a><a href="#beranda" data-go="beranda" data-sec="materi">Galeri</a><a href="#beranda" data-go="beranda" data-sec="tentang">Tentang</a>
+  <button class="btn tg" id="tg" aria-label="Ganti tema">◐</button>
+  <button class="btn fill">Masuk</button>
+</nav>
+<p class="crumb"><a href="#beranda" data-go="beranda" style="color:inherit">Beranda</a> › <a href="#beranda" data-go="beranda" data-sec="materi" style="color:inherit">Materi</a> › <b>Titik</b></p>
+
+<header class="hero" id="pengertian">
+  <div>
+  <h1>Titik</h1>
+  <p>Mengenal unsur, karakteristik, prinsip komposisi, dan penerapan titik dalam Seni Rupa &amp; DKV.</p>
+  <div class="chips"><span class="chip">Dwimatra (2D)</span><span class="chip">± 12 menit</span><span class="chip">8 bagian</span></div>
+  <div class="row"><a href="#karakteristik" class="btn fill">Mulai Belajar</a><button class="btn">Download PDF</button><button class="btn" id="save">♡ Simpan</button><button class="btn">Bagikan</button></div>
+  </div>
+  <div class="vis" id="hv"></div>
+</header>
+
+<div class="layout">
+<aside class="toc" id="toc"><h4>Daftar Isi</h4>
+  <a href="#karakteristik">7 Karakteristik</a><a href="#jenis">Jenis &amp; variasi</a><a href="#mata">Mengarahkan mata</a><a href="#teknik">Teknik &amp; prinsip</a><a href="#repetisi">Repetisi &amp; gradasi</a><a href="#pointilisme">Pointilisme</a><a href="#proses">Proses &amp; penerapan</a><a href="#komposisi">Komposisi 2D</a>
+</aside>
+<main>
+
+<section class="sec" id="karakteristik"><h2><small>01</small>7 karakteristik titik</h2>
+<p>Satu titik dapat berdiri sendiri; ribuan titik dapat membentuk dunia. Titik adalah awal karya visual: susunan titik membangun pola, tekstur, bentuk, dan komposisi tanpa perlu berubah menjadi garis atau bidang. Titik punya tujuh karakteristik: ukuran, bentuk, warna, posisi, jarak, jumlah, dan kepadatan. Coba ubah sendiri di bawah.</p>
+<div class="pan"><div class="vis" id="play"></div>
+<div class="ctrl">
+<label>Ukuran <input type="range" id="s" min="2" max="18" value="8"></label>
+<label>Jarak <input type="range" id="d" min="14" max="50" value="30"></label>
+<label>Jumlah per baris <input type="range" id="n" min="3" max="12" value="7"></label>
+<label>Posisi (geser) <input type="range" id="x" min="-120" max="120" value="0"></label>
+<div>Bentuk <span class="row"><button class="btn sm fill" data-sh="c">Bulat</button><button class="btn sm" data-sh="s">Kotak</button><button class="btn sm" data-sh="w">Belah ketupat</button></span></div>
+<div>Warna <span class="row"><button class="sw on" data-co="currentColor" style="background:var(--text)" aria-label="Hitam"></button><button class="sw" data-co="#8a8f9c" style="background:#8a8f9c" aria-label="Abu"></button><button class="sw" data-co="#e63946" style="background:#e63946" aria-label="Merah"></button></span></div>
+</div><p class="out" id="out"></p></div></section>
+
+<section class="sec" id="jenis"><h2><small>02</small>Jenis &amp; variasi titik</h2>
+<p>Titik dapat divariasikan dalam banyak arah.</p>
+<div class="g" id="jg"></div></section>
+
+<section class="sec" id="mata"><h2><small>03</small>Titik mengarahkan mata</h2>
+<p>Penataan titik menentukan pusat perhatian, keseimbangan, aliran, ritme, ilusi ruang, dan kualitas tekstur.</p>
+<div class="g w" id="mg"></div></section>
+
+<section class="sec" id="teknik"><h2><small>04</small>Teknik &amp; prinsip komposisi</h2>
+<p>Tujuh teknik pengolahan titik, lalu tujuh prinsip yang menyatukannya menjadi komposisi.</p>
+<div class="g" id="tg7"></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Prinsip komposisi</div>
+<div class="chips" style="margin:6px 0 0"><span class="chip">Balance · keseimbangan</span><span class="chip">Unity · kesatuan</span><span class="chip">Rhythm · irama</span><span class="chip">Harmony · keselarasan</span><span class="chip">Contrast · kontras</span><span class="chip">Proportion · proporsi</span><span class="chip">Emphasis · penekanan</span></div></div></section>
+
+<section class="sec" id="repetisi"><h2><small>05</small>Repetisi &amp; gradasi</h2>
+<p>Repetisi membentuk pola. Gradasi menciptakan dimensi.</p>
+<div class="two"><div class="pan"><div class="lab">Teratur</div><div class="vis" id="r1"></div><p class="sm2">Simetris, sistematis.</p></div>
+<div class="pan"><div class="lab">Tidak teratur</div><div class="vis" id="r2"></div><p class="sm2">Alami, spontan.</p></div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Gradasi = dimensi</div><div class="vis" id="gd"></div><p class="sm2">kecil → besar · renggang → rapat · terang → gelap</p></div></section>
+
+<section class="sec" id="pointilisme"><h2><small>06</small>Pointilisme ≠ Nirmana Titik</h2>
+<div class="two"><div class="card" style="--t:190,235,190"><div class="tile" id="p1"></div><b>Nirmana Titik</b><span>Eksplorasi titik sebagai unsur visual dasar untuk membangun komposisi.</span></div>
+<div class="card" style="--t:250,215,170"><div class="tile" id="p2"></div><b>Pointilisme</b><span>Teknik melukis: titik-titik kecil berwarna menyusun citra, bentuk, dan campuran optis.</span></div></div></section>
+
+<section class="sec" id="proses"><h2><small>07</small>Proses &amp; penerapan</h2>
+<p>Dari ide menjadi karya dalam lima langkah.</p>
+<div class="steps"><div class="step">1 · Konsep</div><div class="step">2 · Bidang &amp; pola</div><div class="step">3 · Ukuran &amp; jarak</div><div class="step">4 · Sketsa</div><div class="step">5 · Aplikasi &amp; finishing</div></div>
+<div class="two" style="margin-top:12px"><div class="pan"><div class="lab">Manual</div><p class="sm2">Kertas gambar · pensil · penghapus · drawing pen · spidol · kuas · cat · cotton bud</p></div>
+<div class="pan"><div class="lab">Digital</div><p class="sm2">Aplikasi desain vektor, aplikasi menggambar, dan platform desain visual.</p></div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Titik di dunia desain</div><div class="chips" style="margin:6px 0 0"><span class="chip">Desain grafis</span><span class="chip">Ilustrasi</span><span class="chip">Poster</span><span class="chip">Motif / pattern</span><span class="chip">Fotografi</span><span class="chip">Tipografi</span><span class="chip">Desain digital</span><span class="chip">Seni dekoratif</span></div></div></section>
+
+<section class="sec" id="komposisi"><h2><small>08</small>Komposisi titik 2D</h2>
+<p>Enam cara menata titik pada bidang dua dimensi, lalu empat karya dengan karakter berbeda.</p>
+<div class="g" id="kg6"></div>
+<div class="lab" style="margin:16px 0 8px">4 karya, 4 karakter</div>
+<div class="g w" id="kr4"></div>
+<div class="row" style="margin-top:14px"><button class="btn fill">Coba Kuis Titik</button><button class="btn">Lihat Contoh Lain</button></div>
+<div class="nav2"><a class="btn" href="#beranda" data-go="beranda">← Beranda</a><a class="btn fill" href="#garis" data-go="garis">Garis →</a></div></section>
+
+</main></div>
+<footer>© 2026 Nirmana · Materi Titik · <a href="#pengertian" style="color:inherit">↑ Ke atas</a></footer>
+</div>
+</div>
+</template>
+<template id="tpl-garis">
+<style>
+
+:host{box-sizing:border-box;;
+  --bg1:#f4efe6;--bg2:#e9dfc6;--bg3:#f3d9c8;--glass:rgba(255,252,246,.62);--gb:rgba(255,255,255,.85);
+  --text:#1e1a17;--muted:#6b625a;--btn:#1e1a17;--bt:#f4efe6;--tile:#fffdf8;--fill:rgba(30,26,23,.07);--acc:#d9482b;--ta:.6}
+@media (prefers-color-scheme:dark){:host(:not([data-theme="light"])){
+  --bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}}
+:host([data-theme="dark"]){--bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}
+*{box-sizing:border-box}
+.page{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px 16px 40px;
+  background:radial-gradient(circle at 15% 20%,var(--bg3),transparent 45%),radial-gradient(circle at 85% 80%,var(--bg2),transparent 50%),var(--bg1);background-attachment:fixed}
+.shell{max-width:1000px;margin:0 auto;background:var(--glass);border:1px solid var(--gb);border-radius:28px;padding:20px;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 20px 60px rgba(40,50,90,.15)}
+nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-weight:700;display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#e63946,#ffb703,#2a9d8f,#1d3557,#e63946)}
+nav a{color:var(--text);text-decoration:none;font-size:14px;opacity:.85}
+.btn{font:inherit;font-size:14px;border-radius:999px;padding:9px 18px;border:1px solid var(--text);background:transparent;color:var(--text);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.fill{background:var(--btn);color:var(--bt);border-color:var(--btn)}
+.btn.sm{font-size:13px;padding:7px 14px}
+.tg{width:36px;height:36px;padding:0;display:grid;place-items:center}
+.crumb{font-size:13px;color:var(--muted);margin:22px 0 0}
+.crumb b{color:var(--text)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:center;padding:22px 4px 10px}
+.hero .vis svg{max-height:320px}
+.hero h1{font-size:clamp(34px,6vw,56px);margin:0 0 10px;letter-spacing:-.03em;line-height:1.05}
+.hero p{color:var(--muted);max-width:560px;line-height:1.6;margin:0 0 16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--fill);border-radius:999px;font-size:12px;padding:4px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:180px 1fr;gap:20px;margin-top:22px;align-items:start}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--glass);border:1px solid var(--gb);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.toc h4{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.toc a{color:var(--muted);text-decoration:none;font-size:13px;padding:7px 10px;border-radius:10px}
+.toc a.on{background:var(--btn);color:var(--bt);font-weight:600}
+.sec{margin-bottom:34px;scroll-margin-top:16px}
+.sec>h2{font-size:26px;margin:0 0 6px;letter-spacing:-.02em;display:flex;gap:10px;align-items:baseline}
+.sec>h2 small{font-size:12px;color:var(--muted);font-weight:600}
+.sec>p{color:var(--muted);line-height:1.6;margin:0 0 14px;font-size:14px}
+.pan{border:1px solid var(--gb);border-radius:22px;padding:16px;background:var(--glass)}
+.g{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+.g.w{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{border-radius:20px;padding:14px;border:1px solid var(--gb);background:linear-gradient(135deg,rgba(var(--t),var(--ta)),transparent 85%),var(--glass)}
+.card b{display:block;font-size:17px}
+.card span{font-size:12px;color:var(--muted)}
+.tile{background:var(--tile);border-radius:12px;padding:6px;margin-bottom:10px;color:var(--text)}
+.tile svg{width:100%;height:50px;display:block}
+.lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:12px 0 2px}
+.vis svg{width:100%;display:block;color:var(--text)}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;font-size:13px}
+.ctrl label{display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.ctrl input[type=range]{width:100%;accent-color:var(--acc)}
+.out{margin-top:10px;font-size:14px}
+.out b{color:var(--acc)}
+.two{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.steps{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.step{background:var(--btn);color:var(--bt);border-radius:14px;padding:14px;font-weight:700;font-size:13px}
+.quote{font-size:clamp(20px,3.5vw,28px);font-weight:800;line-height:1.25;letter-spacing:-.02em;margin:6px 0 16px}
+.nav2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+.sm2{font-size:13px;color:var(--muted);line-height:1.5;margin:6px 0 0}
+footer{margin-top:18px;font-size:12px;color:var(--muted)}
+:host([data-theme="light"]) .card{background:linear-gradient(135deg,var(--lt,rgba(var(--t),var(--ta))),transparent 85%),var(--glass)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+1){--lt:rgba(233,169,138,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+2){--lt:rgba(240,203,107,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+3){--lt:rgba(190,196,132,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+4){--lt:rgba(228,166,160,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+5){--lt:rgba(214,196,170,.6)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+6){--lt:rgba(232,160,90,.5)}
+@media(max-width:760px){.layout,.hero{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto;align-items:center}.toc h4{display:none}.toc a{white-space:nowrap}nav a{display:none}}
+
+
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.logo[data-go]{cursor:pointer}
+.logo:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #d9482b;outline-offset:2px}
+
+.page{padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh}
+</style>
+<div class="page">
+<div class="shell">
+<nav>
+  <span class="logo" data-go="beranda" role="link" tabindex="0"><i></i>Nirmana</span>
+  <a href="#beranda" data-go="beranda" data-sec="materi">Materi</a><a href="#beranda" data-go="beranda" data-sec="materi">Galeri</a><a href="#beranda" data-go="beranda" data-sec="tentang">Tentang</a>
+  <button class="btn tg" id="tg" aria-label="Ganti tema">◐</button>
+  <button class="btn fill">Masuk</button>
+</nav>
+<p class="crumb"><a href="#beranda" data-go="beranda" style="color:inherit">Beranda</a> › <a href="#beranda" data-go="beranda" data-sec="materi" style="color:inherit">Materi</a> › <b>Garis</b></p>
+
+<header class="hero" id="pengertian">
+  <div>
+  <h1>Garis</h1>
+  <p>Dasar elemen seni rupa yang mengolah arah, panjang, ketebalan, dan ritme untuk membentuk pengalaman visual. Secara sederhana, garis adalah jejak yang bergerak: ia punya titik awal dan titik akhir.</p>
+  <div class="chips"><span class="chip">Dwimatra (2D)</span><span class="chip">± 10 menit</span><span class="chip">8 bagian</span></div>
+  <div class="row"><a href="#karakteristik" class="btn fill">Mulai Belajar</a><button class="btn">Download PDF</button><button class="btn" id="save">♡ Simpan</button><button class="btn">Bagikan</button></div>
+  </div>
+  <div class="vis" id="hv"></div>
+</header>
+
+<div class="layout">
+<aside class="toc" id="toc"><h4>Daftar Isi</h4>
+  <a href="#karakteristik">Karakteristik</a><a href="#jenis">Jenis garis</a><a href="#kesan">Kesan</a><a href="#irama">Irama &amp; repetisi</a><a href="#gradasi">Gradasi &amp; contoh</a><a href="#proses">Proses &amp; alat</a><a href="#penerapan">Penerapan</a><a href="#kesimpulan">Kesimpulan</a>
+</aside>
+<main>
+
+<section class="sec" id="karakteristik"><h2><small>01</small>Karakteristik garis</h2>
+<p>Satu garis dapat berubah karakter hanya dengan mengubah satu parameter: panjang, arah, ketebalan, tekstur, atau kontinuitas. Coba geser sendiri di bawah.</p>
+<div class="pan"><div class="vis" id="play"></div>
+<div class="ctrl">
+<label>Panjang <input type="range" id="pl" min="15" max="100" value="80"></label>
+<label>Arah (derajat) <input type="range" id="pa" min="-45" max="45" value="0"></label>
+<label>Ketebalan <input type="range" id="pw" min="1" max="24" value="4"></label>
+<label>Kontinuitas <span class="row"><button class="btn sm fill" data-d="0">Menyambung</button><button class="btn sm" data-d="1">Putus-putus</button></span></label>
+</div><p class="out" id="out"></p></div></section>
+
+<section class="sec" id="jenis"><h2><small>02</small>Jenis-jenis garis</h2>
+<p>Bentuk garis menentukan suasana yang tersampaikan.</p>
+<div class="g" id="jg"></div></section>
+
+<section class="sec" id="kesan"><h2><small>03</small>Kesan yang ditimbulkan</h2>
+<p>Pilihan arah, ketebalan, dan kerapatan garis menghasilkan kesan visual yang berbeda.</p>
+<div class="g w" id="kg"></div></section>
+
+<section class="sec" id="irama"><h2><small>04</small>Irama &amp; repetisi</h2>
+<p>Irama mengatur tempo pandang: kapan mata bergerak, berhenti, lalu beralih.</p>
+<div class="pan vis" id="ir"></div>
+<div class="two" style="margin-top:12px"><div class="pan"><div class="lab">Repetisi</div><div class="vis" id="rp"></div><p class="sm2">Pengulangan garis membangun pola, konsistensi, dan ritme yang dapat diprediksi. Satu penyimpangan menciptakan fokus.</p></div>
+<div class="pan"><div class="lab">Variasi pengolahan</div><p class="sm2">Panjang · ketebalan · arah · jarak · tumpang tindih.</p><p class="sm2">Variasi mengubah garis tunggal menjadi sistem visual yang berlapis.</p></div></div></section>
+
+<section class="sec" id="gradasi"><h2><small>05</small>Gradasi &amp; contoh</h2>
+<p>Transisi bertahap menciptakan kedalaman tanpa perspektif realistis. Atur ketebalan, jarak, dan nilai hitam–putih.</p>
+<div class="two"><div class="pan"><div class="lab">Gradasi garis</div><div class="vis" id="gd"></div></div>
+<div class="pan"><div class="lab">Contoh</div><div class="vis" id="ck"></div><p class="sm2">Tumpang tindih garis diagonal membangun kepadatan, kontras, dan pusat energi visual.</p></div></div></section>
+
+<section class="sec" id="proses"><h2><small>06</small>Proses &amp; alat</h2>
+<p>Mulai dari ide sederhana. Uji ritme, koreksi hubungan antargaris, lalu rapikan konsistensi visual.</p>
+<div class="steps"><div class="step">01 · Konsep</div><div class="step">02 · Sketsa</div><div class="step">03 · Pengolahan</div><div class="step">04 · Finishing</div></div>
+<div class="chips" style="margin:14px 0 0"><span class="chip">Pensil</span><span class="chip">Pena</span><span class="chip">Kuas</span><span class="chip">Tinta</span><span class="chip">Perangkat digital</span></div></section>
+
+<section class="sec" id="penerapan"><h2><small>07</small>Penerapan dalam desain</h2>
+<div class="g w">
+<div class="card" style="--t:190,235,190"><b>Grafis</b><span>identitas, poster, pola</span></div>
+<div class="card" style="--t:205,190,245"><b>Interior</b><span>partisi, orientasi, ritme ruang</span></div>
+<div class="card" style="--t:250,215,170"><b>Produk</b><span>struktur, detail, permukaan</span></div></div></section>
+
+<section class="sec" id="kesimpulan"><h2><small>08</small>Kesimpulan</h2>
+<div class="pan"><p class="quote">Garis bukan sekadar batas. Ia adalah arah, ritme, dan keputusan.</p>
+<div class="chips"><span class="chip">Definisi: elemen dasar</span><span class="chip">Karakter: dapat diolah</span><span class="chip">Komposisi: mengatur perhatian</span><span class="chip">Aplikasi: lintas disiplin</span></div>
+<div class="row"><button class="btn fill">Coba Kuis Garis</button><button class="btn">Lihat Contoh Lain</button></div></div>
+<div class="nav2"><a class="btn" href="#titik" data-go="titik">← Titik</a><a class="btn fill" href="#bidang" data-go="bidang">Bidang &amp; Bentuk →</a></div></section>
+
+</main></div>
+<footer>© 2026 Nirmana · Materi Garis · <a href="#pengertian" style="color:inherit">↑ Ke atas</a></footer>
+</div>
+</div>
+</template>
+<template id="tpl-bidang">
+<style>
+
+:host{box-sizing:border-box;;
+  --bg1:#f4efe6;--bg2:#e9dfc6;--bg3:#f3d9c8;--glass:rgba(255,252,246,.62);--gb:rgba(255,255,255,.85);
+  --text:#1e1a17;--muted:#6b625a;--btn:#1e1a17;--bt:#f4efe6;--tile:#fffdf8;--fill:rgba(30,26,23,.07);--acc:#d9482b;--ta:.6}
+@media (prefers-color-scheme:dark){:host(:not([data-theme="light"])){
+  --bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}}
+:host([data-theme="dark"]){--bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}
+*{box-sizing:border-box}
+.page{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px 16px 40px;
+  background:radial-gradient(circle at 15% 20%,var(--bg3),transparent 45%),radial-gradient(circle at 85% 80%,var(--bg2),transparent 50%),var(--bg1);background-attachment:fixed}
+.shell{max-width:1000px;margin:0 auto;background:var(--glass);border:1px solid var(--gb);border-radius:28px;padding:20px;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 20px 60px rgba(40,50,90,.15)}
+nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-weight:700;display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#e63946,#ffb703,#2a9d8f,#1d3557,#e63946)}
+nav a{color:var(--text);text-decoration:none;font-size:14px;opacity:.85}
+.btn{font:inherit;font-size:14px;border-radius:999px;padding:9px 18px;border:1px solid var(--text);background:transparent;color:var(--text);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.fill{background:var(--btn);color:var(--bt);border-color:var(--btn)}
+.btn.sm{font-size:13px;padding:7px 14px}
+.tg{width:36px;height:36px;padding:0;display:grid;place-items:center}
+.crumb{font-size:13px;color:var(--muted);margin:22px 0 0}
+.crumb b{color:var(--text)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:center;padding:22px 4px 10px}
+.hero h1{font-size:clamp(34px,6vw,56px);margin:0 0 10px;letter-spacing:-.03em;line-height:1.05}
+.hero p{color:var(--muted);max-width:520px;line-height:1.6;margin:0 0 16px}
+.hero .hv svg{width:100%;max-height:320px;display:block;color:var(--text)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--fill);border-radius:999px;font-size:12px;padding:4px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:180px 1fr;gap:20px;margin-top:22px;align-items:start}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--glass);border:1px solid var(--gb);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.toc h4{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.toc a{color:var(--muted);text-decoration:none;font-size:13px;padding:7px 10px;border-radius:10px}
+.toc a.on{background:var(--btn);color:var(--bt);font-weight:600}
+.sec{margin-bottom:34px;scroll-margin-top:16px}
+.sec>h2{font-size:26px;margin:0 0 6px;letter-spacing:-.02em;display:flex;gap:10px;align-items:baseline}
+.sec>h2 small{font-size:12px;color:var(--muted);font-weight:600}
+.sec>p{color:var(--muted);line-height:1.6;margin:0 0 14px;font-size:14px}
+.pan{border:1px solid var(--gb);border-radius:22px;padding:16px;background:var(--glass)}
+.g{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g.w{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.two{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{border-radius:20px;padding:14px;border:1px solid var(--gb);background:linear-gradient(135deg,rgba(var(--t),var(--ta)),transparent 85%),var(--glass)}
+.card b{display:block;font-size:16px}
+.card span{font-size:12px;color:var(--muted);line-height:1.45;display:block;margin-top:2px}
+.tile{background:var(--tile);border-radius:12px;padding:6px;margin-bottom:10px;color:var(--text)}
+.tile svg{width:100%;height:70px;display:block}
+.lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+.vis svg{width:100%;display:block;color:var(--text)}
+.kb{font:inherit;font-size:13px;border-radius:999px;border:1px solid var(--gb);background:var(--glass);color:var(--text);padding:7px 14px;cursor:pointer}
+.kb.on{background:var(--btn);color:var(--bt)}
+select{font:inherit;font-size:13px;border-radius:999px;border:1px solid var(--gb);background:var(--glass);color:var(--text);padding:7px 12px}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;font-size:13px}
+.ctrl label,.ctrl div{display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.ctrl input[type=range]{width:100%;accent-color:var(--acc)}
+.out{margin:10px 0 0;font-size:14px;line-height:1.5}
+.out b{color:var(--acc)}
+.th{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:10px}
+.th div{background:var(--tile);border-radius:12px;padding:6px;text-align:center;font-size:11px;color:var(--muted)}
+.th svg{width:100%;height:64px;display:block;color:var(--acc)}
+.sm2{font-size:13px;color:var(--muted);line-height:1.55;margin:6px 0 0}
+.quote{font-size:clamp(20px,3.5vw,28px);font-weight:800;line-height:1.25;letter-spacing:-.02em;margin:0 0 10px}
+.cb{font:inherit;font-size:13px;border-radius:12px;border:1px solid var(--gb);background:var(--glass);color:var(--text);padding:8px 12px;cursor:pointer}
+.cb.on{background:var(--btn);color:var(--bt)}
+.rw{display:grid;grid-template-columns:190px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--gb);font-size:14px;align-items:center}
+.rw:first-child{border:0;padding-top:0}
+.rw em{font-style:normal;font-size:12px;letter-spacing:.04em;font-weight:700}
+.nav2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+footer{margin-top:18px;font-size:12px;color:var(--muted)}
+:host([data-theme="light"]) .card{background:linear-gradient(135deg,var(--lt,rgba(var(--t),var(--ta))),transparent 85%),var(--glass)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+1){--lt:rgba(233,169,138,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+2){--lt:rgba(240,203,107,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+3){--lt:rgba(190,196,132,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+4){--lt:rgba(228,166,160,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+5){--lt:rgba(214,196,170,.6)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+6){--lt:rgba(232,160,90,.5)}
+@media(max-width:760px){.layout,.hero{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto;align-items:center}.toc h4{display:none}.toc a{white-space:nowrap}nav a{display:none}.rw{grid-template-columns:1fr;gap:4px}}
+
+
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.logo[data-go]{cursor:pointer}
+.logo:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #d9482b;outline-offset:2px}
+
+.page{padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh}
+</style>
+<div class="page">
+<div class="shell">
+<nav>
+  <span class="logo" data-go="beranda" role="link" tabindex="0"><i></i>Nirmana</span>
+  <a href="#beranda" data-go="beranda" data-sec="materi">Materi</a><a href="#beranda" data-go="beranda" data-sec="materi">Galeri</a><a href="#beranda" data-go="beranda" data-sec="tentang">Tentang</a>
+  <button class="btn tg" id="tg" aria-label="Ganti tema">◐</button>
+  <button class="btn fill">Masuk</button>
+</nav>
+<p class="crumb"><a href="#beranda" data-go="beranda" style="color:inherit">Beranda</a> › <a href="#beranda" data-go="beranda" data-sec="materi" style="color:inherit">Materi</a> › <b>Bidang &amp; Bentuk</b></p>
+
+<header class="hero" id="pengertian">
+  <div>
+  <h1>Bidang &amp; Bentuk</h1>
+  <p>Bidang adalah area dua dimensi yang dibatasi garis: punya panjang dan lebar, kedudukan, dan arah, tetapi tanpa tebal. Bentuk adalah wujud yang tampak. Dari persegi, segitiga, dan lingkaran sampai bidang organik dan abstrak, keduanya menjadi dasar setiap komposisi visual.</p>
+  <div class="chips"><span class="chip">2D &amp; 3D</span><span class="chip">± 18 menit</span><span class="chip">8 bagian</span></div>
+  <div class="row"><a href="#studio" class="btn fill">Mulai Belajar</a><button class="btn">Download PDF</button><button class="btn" id="save">♡ Simpan</button><button class="btn">Bagikan</button></div>
+  </div>
+  <div class="hv" id="hv"></div>
+</header>
+
+<div class="layout">
+<aside class="toc" id="toc"><h4>Daftar Isi</h4>
+  <a href="#studio">Studio bentuk</a><a href="#jenis">Jenis</a><a href="#sifat">Sifat bentuk</a><a href="#morf">Metamorfosis</a><a href="#susun">Menyusun bentuk</a><a href="#pn">Positif–negatif</a><a href="#prinsip">Prinsip keindahan</a><a href="#kesimpulan">Kesimpulan</a>
+</aside>
+<main>
+
+<section class="sec" id="studio"><h2><small>01</small>Studio bentuk</h2>
+<p>Bidang selalu terbentuk oleh pertemuan beberapa goresan garis, warna, atau tekstur yang berbatasan dengan sisi terluarnya. Ia punya luas, tetapi tanpa tebal. Dalam seni rupa, ada dua cara memandang bentuk.</p>
+<div class="two" style="margin-bottom:12px"><div class="card" style="--t:157,171,143"><b>Form · sosok</b><span>Wujud nyata yang dijiwai: manusia, binatang, tumbuhan.</span></div>
+<div class="card" style="--t:240,110,70"><b>Shape · raut</b><span>Wujud yang hadir tanpa dijiwai atau secara kebetulan. Dibuat karena kegunaan (functional form) atau sebagai ungkapan perasaan (ekspresi).</span></div></div>
+<div class="pan">
+<div class="row" id="sb"></div>
+<div class="vis" id="sp" style="margin-top:12px"></div>
+<div class="ctrl">
+<label>Ukuran bentuk <input type="range" id="su" min="20" max="130" value="70"></label>
+<label>Putar <input type="range" id="sr" min="0" max="360" value="0"></label>
+<label>Bingkai (ruang) <input type="range" id="sf" min="35" max="100" value="80"></label>
+<div>Tampilan <span class="row"><button class="kb on" data-pn="p">Positif</button><button class="kb" data-pn="n">Negatif</button></span></div>
+</div>
+<p class="out" id="so"></p></div></section>
+
+<section class="sec" id="jenis"><h2><small>02</small>Jenis bidang &amp; bentuk</h2>
+<p>Berdasarkan garis pembatasnya, bidang dibagi menjadi geometris dan non-geometris (plastis). Yang non-geometris terdiri dari organik dan abstrak.</p>
+<div class="g w" id="jg"></div>
+<div class="two" style="margin-top:12px"><div class="pan"><div class="lab">Ciri bentuk geometris</div><p class="sm2">Garis pembatas berupa garis lurus atau lengkung yang beraturan. Umumnya punya rumus luas matematis yang pasti. Dibuat manusia, dengan tiga bentuk dasar: segitiga, bujur sangkar, lingkaran (basic form).</p></div>
+<div class="pan"><div class="lab">Ciri bentuk plastis</div><p class="sm2">Garis pembatas tidak beraturan, sehingga rumus luasnya rumit karena harus menggabungkan beberapa rumus. Banyak dimiliki benda alami: awan, batu, daun.</p></div></div>
+</section>
+
+<section class="sec" id="sifat"><h2><small>03</small>Sifat bentuk</h2>
+<p>Bentuk dapat dibaca dari dimensinya dan dari gerak yang ia sampaikan.</p>
+<div class="g" id="sg"></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Tekstur bidang</div><p class="sm2">Tekstur memberi watak pada permukaan bidang yang dapat dilihat dan diraba. Secara umum ada tekstur kasar nyata, kasar semu, ekspresi, dan halus.</p></div></section>
+
+<section class="sec" id="morf"><h2><small>04</small>Metamorfosis bentuk</h2>
+<p>Satu bentuk dapat berubah perlahan menjadi bentuk lain. Pilih bentuk awal dan akhir, lalu geser untuk melihat tahapan perubahannya.</p>
+<div class="pan">
+<div class="row" style="align-items:center"><select id="ma"></select><span>→</span><select id="mb"></select></div>
+<div class="vis" id="mp" style="margin-top:10px"></div>
+<div class="ctrl"><label>Tahap perubahan <input type="range" id="mt" min="0" max="100" value="0"></label></div>
+<div class="th" id="th"></div>
+<p class="sm2">Kelima tahap di atas menunjukkan perubahan bertahap dari bentuk awal ke bentuk akhir.</p></div></section>
+
+<section class="sec" id="susun"><h2><small>05</small>Menyusun bentuk</h2>
+<p>Sembilan cara dua bentuk berhubungan satu sama lain.</p>
+<div class="g" id="ug"></div></section>
+
+<section class="sec" id="pn"><h2><small>06</small>Positif–negatif &amp; irama bidang</h2>
+<p>Bidang positif adalah bidang hitam di atas bidang putih. Bidang negatif adalah bagian putihnya. Lihat bagian putih sebagai vas, lalu lihat sebagai dua wajah yang berhadapan.</p>
+<div class="two"><div class="pan"><div class="lab">Bidang positif</div><div class="vis" id="v1"></div></div><div class="pan"><div class="lab">Bidang negatif</div><div class="vis" id="v2"></div></div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Irama bidang</div>
+<div class="rw"><em>Statis</em><div class="vis" id="i1"></div></div>
+<div class="rw"><em>Dinamis</em><div class="vis" id="i2"></div></div>
+<div class="rw"><em>Terarah</em><div class="vis" id="i3"></div></div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Ilusi ruang dari bidang</div>
+<p class="sm2" style="margin:0 0 8px">Papan kotak-kotak hitam putih bisa tampak menggembung hanya dengan mengubah ukuran bidang dari tengah ke tepi.</p>
+<div class="vis" id="op" style="max-width:320px;margin:0 auto"></div>
+<div class="ctrl"><label>Kelengkungan <input type="range" id="ok" min="0" max="30" value="18"></label></div></div>
+<div class="g w" style="margin-top:12px"><div class="card" style="--t:157,171,143"><b>Memberi batas</b><span>Memisahkan area yang satu dari area yang lain.</span></div><div class="card" style="--t:240,110,70"><b>Membagi ruang</b><span>Membatasi ruang positif dan ruang negatif.</span></div><div class="card" style="--t:233,223,201"><b>Memberi outline</b><span>Dengan bantuan garis untuk menegaskan tepinya.</span></div></div></section>
+
+<section class="sec" id="prinsip"><h2><small>07</small>Prinsip keindahan bentuk</h2>
+<p>Bentuk-bentuk yang baik tidak berdiri sendiri; ia disusun dengan prinsip.</p>
+<div class="g w" id="pg"></div>
+<div class="two" style="margin-top:12px"><div class="pan"><div class="lab">Kesatuan (unity)</div><p class="sm2">Keselarasan unsur-unsur yang disusun, baik dalam wujudnya maupun kaitannya dengan ide yang melandasinya. Enam pendekatan:</p><div class="chips" style="margin:8px 0 0"><span class="chip">Kesamaan</span><span class="chip">Kemiripan</span><span class="chip">Keselarasan</span><span class="chip">Pengkaitan</span><span class="chip">Pengikatan</span><span class="chip">Kerapatan</span></div></div>
+<div class="pan"><div class="lab">Dominasi</div><p class="sm2">Menarik perhatian, menghilangkan kebosanan, dan memecah keberaturan. Cara memperolehnya:</p><div class="chips" style="margin:8px 0 0"><span class="chip">Kontras discord</span><span class="chip">Kontras ekstrem</span><span class="chip">Anomali / keunikan</span><span class="chip">Keunggulan / kekuatan</span></div></div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Proporsi &amp; skala</div><p class="sm2">Proporsi adalah perbandingan ukuran yang serasi antara satu bagian dan bagian lain; tidak ada ukuran pasti. Skala adalah perubahan ukuran tanpa mengubah perbandingan panjang, lebar, atau tinggi, sehingga memberi kesan luas, jauh, sedang, sempit, atau dekat. Ukuran sendiri bersifat nisbi, tergantung area tempat bentuk itu berada.</p><div class="vis" id="ps" style="max-width:420px"></div></div></section>
+
+<section class="sec" id="kesimpulan"><h2><small>08</small>Kesimpulan</h2>
+<div class="pan"><p class="quote">Bidang adalah garis yang menutup diri. Bentuk adalah keputusan tentang apa yang dibatasi dan apa yang dibiarkan kosong.</p>
+<div class="chips"><span class="chip">Geometris &amp; plastis</span><span class="chip">2D &amp; 3D</span><span class="chip">Positif &amp; negatif</span><span class="chip">Kesatuan &amp; dominasi</span></div>
+<div class="row"><button class="btn fill">Coba Kuis Bidang &amp; Bentuk</button><button class="btn">Lihat Contoh Lain</button></div></div>
+<div class="nav2"><a class="btn" href="#garis" data-go="garis">← Garis</a><a class="btn fill" href="#warna" data-go="warna">Warna →</a></div></section>
+
+</main></div>
+<footer>© 2026 Nirmana · Materi Bidang &amp; Bentuk · <a href="#pengertian" style="color:inherit">↑ Ke atas</a></footer>
+</div>
+</div>
+</template>
+<template id="tpl-warna">
+<style>
+
+*{box-sizing:border-box}
+:host{--bg:#f6f1ea;--bg1:#f9f5ef;--bg2:#efe8dc;--glow:radial-gradient(60% 55% at 0% 28%,rgba(243,204,189,.8),transparent 70%),radial-gradient(55% 55% at 100% 88%,rgba(226,214,186,.85),transparent 70%);--shell:#fbf8f3;--sh:0 30px 80px rgba(110,80,50,.18);--card:#fbf8f3;--c2:#fdfbf8;--pnl:#fffdfa;--line:rgba(60,40,20,.12);--cb:rgba(255,255,255,.9);--bl:rgba(29,26,24,.75);--tx:#1d1a18;--mut:#6f665f;--ac:#e11d48;--pill:#1d1a18;--pt:#fff;--chip:#ece8e1;--chipl:transparent;--t1:#f2d4ca;--t2:#f6e4b8;--t3:#dfe3c8;--t4:#f2d2d1;--t5:#e8dfd2;color-scheme:light;}
+@media(prefers-color-scheme:dark){:host(:not([data-theme="light"])){--shell:#1f2138;--sh:none;--glow:linear-gradient(#0000,#0000);--cb:var(--line);--bl:var(--line);--pnl:transparent;--chip:rgba(255,255,255,.1);--chipl:transparent;--t1:var(--c2);--t2:var(--c2);--t3:var(--c2);--t4:var(--c2);--t5:var(--c2);--bg:#1a1838;--bg1:#2b2060;--bg2:#0f3030;--card:rgba(255,255,255,.05);--c2:rgba(255,255,255,.08);--line:rgba(255,255,255,.14);--tx:#f3f2fb;--mut:#aeacc9;--pill:#fff;--pt:#17162b;color-scheme:dark}}
+:host([data-theme="dark"]){--shell:#1f2138;--sh:none;--glow:linear-gradient(#0000,#0000);--cb:var(--line);--bl:var(--line);--pnl:transparent;--chip:rgba(255,255,255,.1);--chipl:transparent;--t1:var(--c2);--t2:var(--c2);--t3:var(--c2);--t4:var(--c2);--t5:var(--c2);--bg:#1a1838;--bg1:#2b2060;--bg2:#0f3030;--card:rgba(255,255,255,.05);--c2:rgba(255,255,255,.08);--line:rgba(255,255,255,.14);--tx:#f3f2fb;--mut:#aeacc9;--pill:#fff;--pt:#17162b;color-scheme:dark}
+.page{margin:0;font:15px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--tx);background:var(--bg);background-image:var(--glow),linear-gradient(135deg,var(--bg1),var(--bg2));background-attachment:fixed}
+.wrap{max-width:1220px;margin:24px auto;padding:0 12px}
+.shell{border:1px solid var(--cb);border-radius:30px;padding:24px 26px 30px;background:var(--shell);box-shadow:var(--sh)}
+nav{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+nav a{color:var(--tx);text-decoration:none;font-size:15px}
+.brand{font-weight:700;display:flex;gap:8px;align-items:center;margin-right:auto;color:var(--tx)!important;font-size:20px!important;gap:10px}
+.logo{width:16px;height:16px;border-radius:50%;background:conic-gradient(#e63946,#ffb703,#2a9d8f,#29a8e0,#1d3557,#e63946)}
+.btn{border:1px solid var(--bl);background:transparent;color:var(--tx);border-radius:999px;padding:11px 22px;font:inherit;font-size:14px;cursor:pointer;text-decoration:none;display:inline-block}#th{width:44px;height:44px;padding:0}.btn svg{width:15px;height:15px;vertical-align:-2px;margin-right:6px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}.btn.saved{color:#e5304f}.btn.saved svg{fill:currentColor}
+.btn.p,.btn.on{background:var(--pill);color:var(--pt);border-color:var(--pill);font-weight:600}
+.btn:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.crumb{font-size:13px;color:var(--mut);margin:14px 0 0}.crumb b{color:var(--tx);font-weight:800}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:10px;align-items:center;margin-bottom:6px}
+h1{font-size:clamp(48px,9vw,76px);font-weight:800;line-height:1;margin:8px 0 12px;letter-spacing:-2px}
+.hero p{color:var(--mut);margin:0 0 14px;max-width:46ch;font-size:17px}
+.chip{display:inline-block;border:1px solid var(--chipl);background:var(--chip);border-radius:999px;padding:4px 14px;font-size:12px;color:var(--tx);margin:0 6px 6px 0}
+.hero .btn{margin:6px 6px 0 0}#hero{width:100%;max-width:300px;justify-self:center}
+.main{display:grid;grid-template-columns:220px 1fr;gap:26px;margin-top:28px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px);align-self:start;border:1px solid var(--cb);border-radius:24px;padding:14px;font-size:13px;background:var(--c2)}
+.toc b{display:block;margin:6px 10px 12px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.toc a{display:block;padding:10px 12px;border-radius:14px;color:var(--mut);text-decoration:none}
+.toc a.on{background:var(--pill);color:var(--pt);font-weight:600}
+section{margin-bottom:42px}
+h2{font-size:28px;font-weight:800;letter-spacing:-.5px;margin:0 0 4px;display:flex;gap:8px;align-items:baseline}
+h2 small{font-size:10px;color:var(--mut);font-weight:500}
+.lead{color:var(--mut);margin:0 0 14px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card{border:1px solid var(--cb);border-radius:22px;padding:16px;background:linear-gradient(135deg,var(--t,var(--c2)),var(--c2) 80%)}.card:nth-child(5n+1){--t:var(--t1)}.card:nth-child(5n+2){--t:var(--t2)}.card:nth-child(5n+3){--t:var(--t3)}.card:nth-child(5n+4){--t:var(--t4)}.card:nth-child(5n){--t:var(--t5)}
+.card h3{margin:0 0 4px;font-size:17px;font-weight:700}.card p,.card li{margin:0;color:var(--mut);font-size:13px}
+.card ul{margin:6px 0 0;padding-left:18px}
+.sw{display:inline-block;width:28px;height:28px;border-radius:50%;border:1px solid var(--line);vertical-align:middle;flex:none}
+.stage{height:225px;border-radius:14px;position:relative;overflow:hidden;margin-bottom:10px}
+.stage i{position:absolute;width:120px;height:120px;border-radius:50%;opacity:0;transition:opacity .2s}
+.stage i.on{opacity:1}
+#sa{background:#000}#sa i{mix-blend-mode:screen}#ss{background:#fff}#ss i{mix-blend-mode:multiply}
+.r{background:#f00;left:calc(50% - 100px);top:15px}.g{background:#0f0;left:calc(50% - 20px);top:15px}.b{background:#00f;left:calc(50% - 60px);top:82px}
+.c{background:#00aeef;left:calc(50% - 100px);top:15px}.m{background:#ec008c;left:calc(50% - 20px);top:15px}.y{background:#fff200;left:calc(50% - 60px);top:82px}
+.res{font-size:13px;color:var(--mut);margin-top:8px}.res b{color:var(--tx)}
+#hue{height:90px;border-radius:14px;margin-bottom:12px;border:1px solid var(--line)}
+label{display:block;font-size:12px;color:var(--mut);margin:8px 0}
+input[type=range]{width:100%;accent-color:var(--ac)}
+.eq{display:flex;align-items:center;gap:8px;padding:8px 12px;margin-top:6px;border-radius:14px;background:var(--pnl);font-size:13px;flex-wrap:wrap}
+.eq span.t{margin-left:auto;color:var(--mut)}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--chip);border:1px solid var(--chipl);border-radius:999px;padding:3px 10px 3px 4px;font-size:12px;color:var(--mut);margin:3px 4px 0 0}
+.pill .sw{width:16px;height:16px}
+#wheel{width:100%;max-width:340px;display:block;margin:0 auto}
+#wheel path{transition:opacity .2s}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:center}
+footer{margin-top:22px;font-size:13px;color:var(--mut)}footer a{color:var(--mut);text-decoration:underline;cursor:pointer}
+.nav2{display:flex;justify-content:space-between;margin-top:10px}
+@media(max-width:760px){.main{grid-template-columns:1fr}.toc{display:none}.hero,.two{grid-template-columns:1fr}.shell{padding:14px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.logo[data-go]{cursor:pointer}
+.logo:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #d9482b;outline-offset:2px}
+
+.page{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);min-height:100vh}
+</style>
+<div class="page">
+<div class="wrap"><div class="shell">
+<nav><a class="brand" href="#beranda" data-go="beranda"><span class="logo"></span>Nirmana</a><a href="#beranda" data-go="beranda" data-sec="materi">Materi</a><a href="#beranda" data-go="beranda" data-sec="materi">Galeri</a><a href="#beranda" data-go="beranda" data-sec="tentang">Tentang</a><button class="btn" id="th" aria-label="Ganti tema">◐</button><a class="btn p" href="#">Masuk</a></nav>
+<div class="crumb"><a href="#beranda" data-go="beranda" style="color:inherit">Beranda</a> › <a href="#beranda" data-go="beranda" data-sec="materi" style="color:inherit">Materi</a> › <b>Warna</b></div>
+<div class="hero"><div><h1>Warna</h1><p>Mengenal pengertian, jenis, pencampuran, makna, dan penerapan warna dalam desain dua dimensi.</p>
+<span class="chip">Dwimatra (2D)</span><span class="chip">± 10 menit</span><span class="chip">7 bagian</span><br>
+<a class="btn p" href="#apa">Mulai Belajar</a><button class="btn" id="pd">Download PDF</button><button class="btn" id="sv" aria-pressed="false">Simpan</button><button class="btn" id="sh">Bagikan</button></div>
+<svg id="hero" viewBox="0 0 260 260" role="img" aria-label="Titik-titik warna membentuk lingkaran warna"></svg></div>
+
+<div class="main"><aside class="toc"><b>Daftar Isi</b><a href="#apa">Apa itu warna</a><a href="#cahaya">Additive &amp; subtractive</a><a href="#dimensi">Dimensi warna</a><a href="#campur">Pencampuran bahan</a><a href="#klas">Klasifikasi</a><a href="#panas">Panas &amp; dingin</a><a href="#arti">Warna &amp; artinya</a></aside>
+<main>
+<section id="apa"><h2><small>01</small>Apa itu warna</h2>
+<p class="lead">Warna adalah spektrum tertentu dalam cahaya sempurna (putih). Identitasnya ditentukan panjang gelombang cahaya.</p>
+<div class="grid"><div class="card"><h3>Secara fisik</h3><p>Sifat cahaya yang dipancarkan, dapat diperikan lewat panjang gelombang. Cahaya tampak hanyalah bagian sempit dari gelombang elektromagnetik.</p></div>
+<div class="card"><h3>Secara psikologis</h3><p>Bagian dari pengalaman indra penglihatan. Pilihan warna memengaruhi kesan pembaca, suasana hati, dan keindahan desain.</p></div></div>
+<div class="grid" style="margin-top:12px"><div class="card"><span class="sw" style="background:#e11d48"></span><h3>Benda merah</h3><p>Pigmennya memantulkan merah dan menyerap warna lain.</p></div>
+<div class="card"><span class="sw" style="background:#111"></span><h3>Benda hitam</h3><p>Pigmennya menyerap semua warna pelangi dalam spektrum.</p></div>
+<div class="card"><span class="sw" style="background:#fff"></span><h3>Benda putih</h3><p>Pigmennya memantulkan semua warna pelangi atau semua panjang gelombang.</p></div></div></section>
+
+<section id="cahaya"><h2><small>02</small>Warna additive &amp; subtractive</h2>
+<p class="lead">Menurut asal kejadiannya, warna dibagi dua. Nyalakan tiap lingkaran dan lihat hasil campurannya.</p>
+<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+<div class="card"><h3>Additive — cahaya (RGB)</h3><p>Berasal dari cahaya spektrum. Merah, hijau, dan biru dalam jumlah sama menghasilkan putih.</p><div class="stage" style="margin-top:10px" id="sa"><i class="r on"></i><i class="g on"></i><i class="b"></i></div>
+<div class="row" id="ad"><button class="btn on" data-k="r">Merah</button><button class="btn on" data-k="g">Hijau</button><button class="btn" data-k="b">Biru</button></div><div class="res" id="ra"></div></div>
+<div class="card"><h3>Subtractive — pigmen (CMY/CMYK)</h3><p>Berasal dari pigmen transparan. Primernya sian, magenta, dan kuning. K pada CMYK bukan warna, melainkan unsur gelap (black).</p><div class="stage" style="margin-top:10px" id="ss"><i class="c on"></i><i class="m on"></i><i class="y"></i></div>
+<div class="row" id="su"><button class="btn on" data-k="c">Sian</button><button class="btn on" data-k="m">Magenta</button><button class="btn" data-k="y">Kuning</button></div><div class="res" id="rs"></div></div></div></section>
+
+<section id="dimensi"><h2><small>03</small>Tiga dimensi warna</h2>
+<p class="lead">Hue, value, dan chroma sangat memengaruhi tata rupa. Geser untuk merasakannya.</p>
+<div class="two"><div><div id="hue"></div><div class="res" id="hr"></div></div><div>
+<label>Hue — rona, nama dan jenis warna<input type="range" id="h" min="0" max="360" value="340"></label>
+<label>Value — terang-gelap, tua-muda (lightness)<input type="range" id="l" min="8" max="92" value="50"></label>
+<label>Chroma — cerah-redup, intensitas (saturation)<input type="range" id="s" min="0" max="100" value="80"></label></div></div></section>
+
+<section id="campur"><h2><small>04</small>Pencampuran warna bahan</h2>
+<p class="lead">Dari tiga warna primer lahir sekunder, tersier, hingga kuarter. Bila semua dicampur, hasilnya hitam (gelap).</p>
+<div class="grid" style="margin-bottom:14px"><div class="card"><h3>Tinta cetak</h3><p>Print komputer dan offset. Primer: cyan, magenta, yellow (CMY).</p></div><div class="card"><h3>Cat</h3><p>Cat air, poster, akrilik, minyak. Primer dalam praktik: kuning, merah, biru.</p></div></div>
+<div id="mix" class="grid" style="grid-template-columns:repeat(auto-fit,minmax(290px,1fr))"></div></section>
+
+<section id="klas"><h2><small>05</small>Klasifikasi warna</h2>
+<p class="lead">Ada lima klasifikasi warna.</p><div id="kl" class="grid"></div></section>
+
+<section id="panas"><h2><small>06</small>Warna panas &amp; dingin</h2>
+<p class="lead">Dua belas warna (3 primer, 3 sekunder, 6 intermediate) disusun melingkar, lalu dibelah menjadi dua daerah.</p>
+<div class="two"><div><div class="row" id="wf"><button class="btn p" data-f="all">Semua</button><button class="btn" data-f="w">Panas</button><button class="btn" data-f="c">Dingin</button></div><svg id="wheel" viewBox="0 0 320 320" role="img" aria-label="Lingkaran 12 warna"></svg></div>
+<div><div class="card" style="margin-bottom:10px"><h3>Panas</h3><p>Merah, jingga, kuning. Kesan semangat, kuat, dan aktif.</p></div><div class="card" style="margin-bottom:10px"><h3>Dingin</h3><p>Biru, ungu, hijau. Kesan tenang, kalem, dan pasif. Terlalu banyak warna dingin terkesan sedih dan melankoli.</p></div><div class="card"><h3>Bisa bergeser</h3><p>Hijau menghangat ke arah kuning-kehijauan, ungu menghangat ke arah ungu-kemerahan. Panas dan dingin saling berkomplemen, sehingga kontras.</p></div></div></div></section>
+
+<section id="arti"><h2><small>07</small>Warna &amp; artinya</h2>
+<p class="lead">Setiap warna punya profil identitasnya sendiri. Pilih satu.</p>
+<div class="row" id="ac"></div><div class="card" id="ad2"></div></section>
+
+<div class="nav2"><a class="btn" href="#bidang" data-go="bidang">← Bidang &amp; Bentuk</a><a class="btn p" href="#tekstur" data-go="tekstur">Tekstur →</a></div>
+</main></div>
+<footer>© 2026 Nirmana · Materi Warna · <a href="#" id="up">↑ Ke atas</a></footer>
+</div></div>
+</div>
+</template>
+<template id="tpl-tekstur">
+<style>
+
+:host{box-sizing:border-box;;
+  --bg1:#f4efe6;--bg2:#e9dfc6;--bg3:#f3d9c8;--glass:rgba(255,252,246,.62);--gb:rgba(255,255,255,.85);
+  --text:#1e1a17;--muted:#6b625a;--btn:#1e1a17;--bt:#f4efe6;--tile:#fffdf8;--fill:rgba(30,26,23,.07);--acc:#d9482b;--ta:.6}
+@media (prefers-color-scheme:dark){:host(:not([data-theme="light"])){
+  --bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}}
+:host([data-theme="dark"]){--bg1:#1b2140;--bg2:#12302f;--bg3:#2a2146;--glass:rgba(30,34,52,.55);--gb:rgba(255,255,255,.14);
+  --text:#f2f3f7;--muted:#a3a9bb;--btn:#f2f3f7;--bt:#111;--tile:#262b40;--fill:rgba(255,255,255,.1);--ta:.28;color-scheme:dark}
+*{box-sizing:border-box}
+.page{margin:0;min-height:100vh;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px 16px 40px;
+  background:radial-gradient(circle at 15% 20%,var(--bg3),transparent 45%),radial-gradient(circle at 85% 80%,var(--bg2),transparent 50%),var(--bg1);background-attachment:fixed}
+.shell{max-width:1000px;margin:0 auto;background:var(--glass);border:1px solid var(--gb);border-radius:28px;padding:20px;
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 20px 60px rgba(40,50,90,.15)}
+nav{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.logo{font-weight:700;display:flex;align-items:center;gap:8px;margin-right:auto}
+.logo i{width:22px;height:22px;border-radius:50%;background:conic-gradient(#e63946,#ffb703,#2a9d8f,#1d3557,#e63946)}
+nav a{color:var(--text);text-decoration:none;font-size:14px;opacity:.85}
+.btn{font:inherit;font-size:14px;border-radius:999px;padding:9px 18px;border:1px solid var(--text);background:transparent;color:var(--text);cursor:pointer;text-decoration:none;display:inline-block}
+.btn.fill{background:var(--btn);color:var(--bt);border-color:var(--btn)}
+.btn.sm{font-size:13px;padding:7px 14px}
+.tg{width:36px;height:36px;padding:0;display:grid;place-items:center}
+.crumb{font-size:13px;color:var(--muted);margin:22px 0 0}
+.crumb b{color:var(--text)}
+.hero{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:center;padding:22px 4px 10px}
+.hero h1{font-size:clamp(34px,6vw,56px);margin:0 0 10px;letter-spacing:-.03em;line-height:1.05}
+.hero p{color:var(--muted);max-width:520px;line-height:1.6;margin:0 0 16px}
+.hv{display:flex;gap:6px;height:300px}
+.hv svg{flex:1;height:100%;border-radius:14px;min-width:0}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--fill);border-radius:999px;font-size:12px;padding:4px 12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.layout{display:grid;grid-template-columns:180px 1fr;gap:20px;margin-top:22px;align-items:start}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px);background:var(--glass);border:1px solid var(--gb);border-radius:20px;padding:14px;display:flex;flex-direction:column;gap:2px}
+.toc h4{margin:0 0 8px;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.toc a{color:var(--muted);text-decoration:none;font-size:13px;padding:7px 10px;border-radius:10px}
+.toc a.on{background:var(--btn);color:var(--bt);font-weight:600}
+.sec{margin-bottom:34px;scroll-margin-top:16px}
+.sec>h2{font-size:26px;margin:0 0 6px;letter-spacing:-.02em;display:flex;gap:10px;align-items:baseline}
+.sec>h2 small{font-size:12px;color:var(--muted);font-weight:600}
+.sec>p{color:var(--muted);line-height:1.6;margin:0 0 14px;font-size:14px}
+.pan{border:1px solid var(--gb);border-radius:22px;padding:16px;background:var(--glass)}
+.g{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.g.w{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.g.s{grid-template-columns:repeat(auto-fit,minmax(110px,1fr))}
+.two{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.card{border-radius:20px;padding:14px;border:1px solid var(--gb);background:linear-gradient(135deg,rgba(var(--t),var(--ta)),transparent 85%),var(--glass)}
+.card b{display:block;font-size:16px}
+.card span{font-size:12px;color:var(--muted);line-height:1.45;display:block;margin-top:2px}
+.tile{background:var(--tile);border-radius:12px;padding:6px;margin-bottom:10px;color:var(--text)}
+.tile svg{width:100%;height:70px;display:block;border-radius:8px}
+.lab{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 6px}
+.prev svg{width:100%;display:block;border-radius:16px}
+.kb{border:1px solid var(--gb);background:var(--glass);border-radius:14px;padding:6px;cursor:pointer;color:var(--text);font:inherit;font-size:12px;display:flex;flex-direction:column;gap:5px;text-align:left}
+.kb svg{width:100%;height:50px;border-radius:9px;display:block}
+.kb.on{outline:2px solid var(--text);outline-offset:1px}
+.ctrl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px;font-size:13px}
+.ctrl label,.ctrl div{display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.ctrl input[type=range]{width:100%;accent-color:var(--acc)}
+.sw{width:26px;height:26px;border-radius:50%;border:2px solid var(--gb);padding:0;cursor:pointer;color:var(--text);font-size:10px}
+.sw.on{outline:2px solid var(--text);outline-offset:2px}
+.out{margin:10px 0 0;font-size:14px;line-height:1.5}
+.out b{color:var(--acc)}
+.steps{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.step{background:var(--btn);color:var(--bt);border-radius:14px;padding:14px;font-weight:700;font-size:13px}
+.step i{font-style:normal;opacity:.6;margin-right:6px}
+.sm2{font-size:13px;color:var(--muted);line-height:1.55;margin:6px 0 0}
+.rw{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--gb);font-size:14px}
+.rw:first-child{border:0;padding-top:0}
+.rw em{font-style:normal;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--acc);font-weight:700;align-self:center}
+.bar3{display:flex;gap:6px;height:46px;margin-top:8px}
+.bar3 div{border-radius:10px;overflow:hidden}.bar3 svg{width:100%;height:100%;display:block}
+.quote{font-size:clamp(20px,3.5vw,28px);font-weight:800;line-height:1.25;letter-spacing:-.02em;margin:0 0 10px}
+.cb{font:inherit;font-size:13px;border-radius:12px;border:1px solid var(--gb);background:var(--glass);color:var(--text);padding:8px 12px;cursor:pointer}
+.cb.on{background:var(--btn);color:var(--bt)}
+.nav2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px}
+footer{margin-top:18px;font-size:12px;color:var(--muted)}
+:host([data-theme="light"]) .card{background:linear-gradient(135deg,var(--lt,rgba(var(--t),var(--ta))),transparent 85%),var(--glass)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+1){--lt:rgba(233,169,138,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+2){--lt:rgba(240,203,107,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+3){--lt:rgba(190,196,132,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+4){--lt:rgba(228,166,160,.55)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+5){--lt:rgba(214,196,170,.6)}
+:host([data-theme="light"]) :is(.g,.two)>.card:nth-child(6n+6){--lt:rgba(232,160,90,.5)}
+:host([data-theme="light"]) :is(.g,.two)>.card.bad{--lt:rgba(233,169,138,.65)}
+:host([data-theme="light"]) :is(.g,.two)>.card.good{--lt:rgba(190,196,132,.65)}
+@media(max-width:760px){.layout,.hero{grid-template-columns:1fr}.toc{position:static;flex-direction:row;overflow-x:auto;align-items:center}.toc h4{display:none}.toc a{white-space:nowrap}nav a{display:none}.rw{grid-template-columns:1fr;gap:2px}.hv{height:220px}}
+
+
+.crumb a{text-decoration:none}.crumb a:hover{text-decoration:underline}
+.logo[data-go]{cursor:pointer}
+.logo:focus-visible,a:focus-visible,button:focus-visible{outline:2px solid #d9482b;outline-offset:2px}
+
+.page{padding-top:calc(20px + env(safe-area-inset-top,0px));padding-bottom:calc(40px + env(safe-area-inset-bottom,0px));min-height:100vh}
+</style>
+<div class="page">
+<div class="shell">
+<nav>
+  <span class="logo" data-go="beranda" role="link" tabindex="0"><i></i>Nirmana</span>
+  <a href="#beranda" data-go="beranda" data-sec="materi">Materi</a><a href="#beranda" data-go="beranda" data-sec="materi">Galeri</a><a href="#beranda" data-go="beranda" data-sec="tentang">Tentang</a>
+  <button class="btn tg" id="tg" aria-label="Ganti tema">◐</button>
+  <button class="btn fill">Masuk</button>
+</nav>
+<p class="crumb"><a href="#beranda" data-go="beranda" style="color:inherit">Beranda</a> › <a href="#beranda" data-go="beranda" data-sec="materi" style="color:inherit">Materi</a> › <b>Tekstur</b></p>
+
+<header class="hero" id="pengertian">
+  <div>
+  <h1>Tekstur</h1>
+  <p>Tekstur: ketika permukaan menjadi bahasa. Ia adalah karakter permukaan yang dapat dilihat dan/atau dirasakan. Dalam nirmana, tekstur memperkaya visual, memberi kedalaman, dan mengubah persepsi kita terhadap berat, suhu, serta sifat sebuah objek.</p>
+  <div class="chips"><span class="chip">2D &amp; 3D</span><span class="chip">± 15 menit</span><span class="chip">8 bagian</span></div>
+  <div class="row"><a href="#studio" class="btn fill">Mulai Belajar</a><button class="btn">Download PDF</button><button class="btn" id="save">♡ Simpan</button><button class="btn">Bagikan</button></div>
+  </div>
+  <div class="hv" id="hv"></div>
+</header>
+
+<div class="layout">
+<aside class="toc" id="toc"><h4>Daftar Isi</h4>
+  <a href="#studio">Studio tekstur</a><a href="#karakteristik">Karakteristik</a><a href="#nyata">Nyata &amp; semu</a><a href="#kesan">Kesan</a><a href="#membuat">Cara membuat</a><a href="#komposisi">Komposisi</a><a href="#eksperimen">Eksperimen</a><a href="#kesimpulan">Kesimpulan</a>
+</aside>
+<main>
+
+<section class="sec" id="studio"><h2><small>01</small>Studio tekstur</h2>
+<p>Nirmana adalah pengorganisasian garis, bentuk, warna, tekstur, dan ruang menjadi karya yang utuh. Di sini kamu bisa mencoba delapan karakter permukaan: pilih satu, lalu ubah kekasaran, kerapatan, dan arah cahayanya.</p>
+<div class="pan">
+<div class="g s" id="kb"></div>
+<div class="prev" id="tp" style="margin-top:12px"></div>
+<div class="ctrl">
+<label>Kekasaran (relief) <input type="range" id="ts" min="0" max="14" step=".5" value="7"></label>
+<label>Kerapatan <input type="range" id="tf" min=".4" max="2.5" step=".1" value="1"></label>
+<label>Arah cahaya <input type="range" id="ta" min="0" max="360" value="45"></label>
+<div>Jenis <span class="row"><button class="btn sm fill" data-m="r">Nyata</button><button class="btn sm" data-m="s">Semu</button></span></div>
+<div>Warna <span class="row" id="sws"></span></div>
+</div>
+<p class="out" id="out"></p></div></section>
+
+<section class="sec" id="karakteristik"><h2><small>02</small>Karakteristik tekstur</h2>
+<p>Enam hal yang bisa kamu amati dari sebuah permukaan.</p>
+<div class="g" id="kg"></div></section>
+
+<section class="sec" id="nyata"><h2><small>03</small>Nyata vs semu, alami vs buatan</h2>
+<p>Tekstur dibedakan dari cara kita merasakannya, dan dari mana asalnya.</p>
+<div class="two"><div class="pan"><div class="lab">Tekstur nyata</div><div class="prev" id="n1"></div><p class="sm2">Permukaan dapat diraba dan dirasakan. Ia punya relief, jadi cahaya dan bayangannya berubah saat sudut pandang bergeser.</p></div>
+<div class="pan"><div class="lab">Tekstur semu</div><div class="prev" id="n2"></div><p class="sm2">Kesan tekstur hadir hanya melalui penglihatan. Permukaannya datar; yang berubah hanya gambarnya.</p></div></div>
+<div class="two" style="margin-top:12px"><div class="card" style="--t:157,171,143"><b>Alami · ditemukan</b><span>Kayu, batu, kulit kayu, daun, serat, kelapa. Dibentuk oleh alam.</span></div>
+<div class="card" style="--t:240,110,70"><b>Buatan · dirancang</b><span>Tenun, plester timbul, keramik, cetakan, tampilan digital. Dibentuk oleh manusia.</span></div></div>
+<p class="sm2">Mengenali sumber membantu desainer memilih tekstur yang tepat secara makna, fungsi, dan produksi.</p></section>
+
+<section class="sec" id="kesan"><h2><small>04</small>Tekstur mengubah kesan</h2>
+<p>Permukaan membentuk asosiasi: sutra terasa lembut, beton halus terasa modern, dan batu bertekstur terasa kuat.</p>
+<div class="g s" id="eg"></div>
+<div class="lab" style="margin:18px 0 8px">Bagaimana tekstur terbentuk?</div>
+<div class="steps"><div class="step">Bentuk + Pola</div><div class="step" style="background:var(--acc);color:#fff">Warna + Gradasi</div><div class="step">Kontras + Repetisi</div></div>
+<p class="sm2">Struktur memberi irama · gradasi memberi kedalaman · kontras memberi fokus.</p></section>
+
+<section class="sec" id="membuat"><h2><small>05</small>Cara membuat tekstur</h2>
+<div class="lab">Tekstur nyata: empat cara</div>
+<div class="steps"><div class="step"><i>01</i>Cetak timbul / emboss</div><div class="step"><i>02</i>Ukir dan pahatan</div><div class="step"><i>03</i>Material bertekstur</div><div class="step"><i>04</i>Kolase bahan</div></div>
+<div class="lab" style="margin:18px 0 8px">Ilusi tekstur di bidang datar</div>
+<div class="g w" id="ig"></div></section>
+
+<section class="sec" id="komposisi"><h2><small>06</small>Komposisi: mengatur, bukan menumpuk</h2>
+<div class="pan">
+<div class="rw"><em>Keseimbangan</em><span>Halus ↔ kasar</span></div>
+<div class="rw"><em>Kontras</em><span>Menentukan fokus</span></div>
+<div class="rw"><em>Ritme</em><span>Repetisi terukur</span></div>
+<div class="rw"><em>Kesatuan</em><span>Semua unsur selaras</span></div></div>
+<div class="lab" style="margin:18px 0 8px">Kurangi bising. Perkuat pesan.</div>
+<div class="two"><div class="card bad" style="--t:240,110,70"><b>✕ Terlalu banyak</b><span>Tekstur saling berebut perhatian, hierarki hilang, dan pesan sulit dibaca. Hindari mencampur banyak karakter tanpa tujuan. Dekorasi tanpa fungsi.</span></div>
+<div class="card good" style="--t:157,171,143"><b>✓ Tepat guna</b><span>Pilih satu tekstur dominan, satu aksen, lalu sisakan ruang tenang. Sesuaikan karakter permukaan dengan konteks dan pesan. Keseimbangan + kesatuan.</span></div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Panduan praktis 60 · 30 · 10</div>
+<div class="bar3" id="b3"></div>
+<p class="sm2">60% tekstur dominan · 30% pendukung · 10% aksen.</p></div></section>
+
+<section class="sec" id="eksperimen"><h2><small>07</small>Eksperimen &amp; membaca karya</h2>
+<p>Eksperimen adalah metode. Empat langkah, lalu satu latihan.</p>
+<div class="steps"><div class="step"><i>01</i>Kumpulkan media</div><div class="step"><i>02</i>Uji nyata &amp; semu</div><div class="step"><i>03</i>Dokumentasikan</div><div class="step"><i>04</i>Bandingkan hasil</div></div>
+<div class="pan" style="margin-top:12px"><div class="lab">Latihan: 6 sampel, 10 × 10 cm, dari tiga bahan berbeda</div>
+<div class="row" id="cb"></div><p class="out" id="cn"></p></div>
+<div class="lab" style="margin:18px 0 8px">Membaca tekstur pada karya</div>
+<div class="g w"><div class="card" style="--t:157,171,143"><b>Jenis</b><span>Nyata; kasar, berlapis, organik.</span></div><div class="card" style="--t:233,223,201"><b>Teknik</b><span>Kolase serat + pasta bertekstur + goresan.</span></div><div class="card" style="--t:240,110,70"><b>Dampak</b><span>Bayangan mempertegas kedalaman dan ritme permukaan.</span></div></div>
+<div class="lab" style="margin:18px 0 8px">Dari galeri ke komunikasi</div>
+<div class="g w"><div class="card" style="--t:157,171,143"><b>Seni rupa</b></div><div class="card" style="--t:240,110,70"><b>Packaging</b></div><div class="card" style="--t:233,223,201"><b>Poster + branding</b></div></div>
+<p class="sm2">Tekstur dapat memberi karakter, membangun hierarki, dan menguatkan pengalaman terhadap pesan maupun objek.</p></section>
+
+<section class="sec" id="kesimpulan"><h2><small>08</small>Kesimpulan</h2>
+<div class="pan"><p class="quote">Tekstur adalah permukaan yang berbicara. Pilih yang perlu, sisakan ruang untuk tenang.</p>
+<div class="chips"><span class="chip">Dilihat &amp; dirasakan</span><span class="chip">Nyata &amp; semu</span><span class="chip">Alami &amp; buatan</span><span class="chip">Tepat guna</span></div>
+<div class="row"><button class="btn fill">Coba Kuis Tekstur</button><button class="btn">Lihat Contoh Lain</button></div></div>
+<div class="nav2"><a class="btn" href="#warna" data-go="warna">← Warna</a><a class="btn fill" href="#beranda" data-go="beranda" data-sec="materi">Semua Materi →</a></div></section>
+
+</main></div>
+<footer>© 2026 Nirmana · Materi Tekstur · <a href="#pengertian" style="color:inherit">↑ Ke atas</a></footer>
+</div>
+</div>
+</template>
+
+<script>
+/* ===== halaman: beranda ===== */
+function init_beranda(ROOT){
+
+const tabs=[...ROOT.querySelectorAll('.tab')],cards=[...ROOT.querySelectorAll('.card')],q=ROOT.getElementById('q'),empty=ROOT.getElementById('empty');
+let f='all';
+function apply(){
+  const t=q.value.trim().toLowerCase();let n=0;
+  cards.forEach(c=>{
+    const ok=(f==='all'||c.dataset.c.includes(f))&&c.textContent.toLowerCase().includes(t);
+    c.hidden=!ok;if(ok)n++;
+  });
+  empty.style.display=n?'none':'block';
+}
+tabs.forEach(b=>b.onclick=()=>{f=b.dataset.f;tabs.forEach(x=>x.setAttribute('aria-pressed',x===b));apply()});
+q.oninput=apply;
+ROOT.querySelectorAll('.mark').forEach(m=>m.onclick=()=>{
+  const on=m.getAttribute('aria-pressed')!=='true';m.setAttribute('aria-pressed',on);m.textContent=on?'♥':'♡';
+});
+ROOT.getElementById('theme').onclick=NirmanaToggleTheme;
+
+}
+/* ===== halaman: titik ===== */
+function init_titik(ROOT){
+
+const $=id=>ROOT.getElementById(id);
+let seed=7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+const D=(x,y,r,o=1)=>`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${Math.max(r,.3).toFixed(2)}"${o<1?` opacity="${o.toFixed(2)}"`:''}/>`;
+const SV=(inner,vb='200 100')=>`<svg viewBox="0 0 ${vb}" fill="currentColor" aria-hidden="true">${inner}</svg>`;
+const Q=(n,f)=>[...Array(n).keys()].map(f).join('');
+const G={
+ grid:()=>Q(5,r=>Q(7,c=>r==4&&c==6?'':D(18+c*27,12+r*19,.6+c*.55))),
+ rand:(s=11)=>{seed=s;return Q(5,r=>Q(7,c=>D(14+c*28+rnd()*14,10+r*20+rnd()*10,.8+rnd()*3)))},
+ pyr:()=>{const R=[2.2,3,4,3.2,2],S=[7,9,11,14,17],N=[7,7,7,7,6];return Q(5,k=>Q(N[k],i=>D(100+(i-(N[k]-1)/2)*S[k],14+k*17,R[k])))},
+ rows:()=>Q(5,k=>Q(7,c=>k==4&&c==6?'':D(18+c*27,12+k*19,.8+k*.7))),
+ color:()=>Q(5,r=>Q(7,c=>D(18+c*27,12+r*19,1+c*.45,.25+c*.12))),
+ space:()=>Q(4,r=>{let x=8;return Q(8,c=>{x+=c?(4+c*3.2):0;return D(x*1.3,16+r*22,2.6)})})
+};
+const card=(a,i)=>`<div class="card" style="--t:${['190,235,190','170,215,240','205,190,245','250,215,170','180,230,215','200,205,245','190,235,190'][i%7]}"><div class="tile">${SV(a[2])}</div><b>${a[0]}</b><span>${a[1]}</span></div>`;
+
+/* hero: gugusan titik diagonal */
+seed=3;let h='';for(let i=0;i<150;i++){const t=Math.pow(rnd(),.7),x=20+t*200+(rnd()-.5)*70,y=20+t*150+(rnd()-.5)*70;h+=D(x,y,.8+t*5*rnd(),.4+t*.6)}
+$('hv').innerHTML=SV(h,'240 200');
+
+/* playground */
+let sh='c',co='currentColor';
+function play(){
+  const s=+$('s').value,d=+$('d').value,n=+$('n').value,dx=+$('x').value,rows=3;
+  const w=(n-1)*d,x0=300-w/2+dx,y0=85-(rows-1)*d/2;let o='';
+  for(let r=0;r<rows;r++)for(let c=0;c<n;c++){
+    const x=x0+c*d,y=y0+r*d;
+    o+=sh=='c'?`<circle cx="${x}" cy="${y}" r="${s/2}"/>`:sh=='s'?`<rect x="${x-s/2}" y="${y-s/2}" width="${s}" height="${s}"/>`:`<rect x="${x-s/2}" y="${y-s/2}" width="${s}" height="${s}" transform="rotate(45 ${x} ${y})"/>`;
+  }
+  $('play').innerHTML=`<svg viewBox="0 0 600 170" fill="${co}" aria-hidden="true">${o}</svg>`;
+  const k=s/d,t=k>.45?'Rapat':k>.2?'Sedang':'Renggang';
+  $('out').innerHTML=`Jumlah titik: <b>${n*rows}</b> · Kepadatan: <b>${t}</b>`;
+}
+['s','d','n','x'].forEach(i=>$(i).oninput=play);
+ROOT.querySelectorAll('[data-sh]').forEach(b=>b.onclick=()=>{sh=b.dataset.sh;ROOT.querySelectorAll('[data-sh]').forEach(x=>x.classList.toggle('fill',x===b));play()});
+ROOT.querySelectorAll('[data-co]').forEach(b=>b.onclick=()=>{co=b.dataset.co;ROOT.querySelectorAll('[data-co]').forEach(x=>x.classList.toggle('on',x===b));play()});
+play();
+
+/* kartu */
+$('jg').innerHTML=[['Kecil ↔ besar','Ukuran naik bertahap',G.grid()],['Teratur ↔ acak','Susunan sistematis atau spontan',G.rand()],['Geometris ↔ organik','Bentuk kelompok titik',G.pyr()],['Ukuran bervariasi','Perubahan ukuran antarbaris',G.rows()]].map(card).join('');
+$('mg').innerHTML=[['Fokus &amp; berat visual','Pusat perhatian dan keseimbangan',G.pyr()],['Gerak &amp; irama','Aliran dan ritme pandang',G.rand(21)],['Kedalaman &amp; tekstur','Ilusi ruang dan kualitas permukaan',G.rows()]].map(card).join('');
+$('tg7').innerHTML=[['Pengulangan','',G.grid()],['Penyebaran','',G.rand(5)],['Pengelompokan','',G.pyr()],['Perubahan ukuran','',G.rows()],['Perubahan warna','',G.color()],['Perubahan jarak','',G.space()],['Perubahan kepadatan','',G.pyr()]].map(card).join('');
+$('r1').innerHTML=SV(G.grid());$('r2').innerHTML=SV(G.rand(29));
+
+G.org=()=>Q(26,i=>D(10+i*7.2,50+Math.sin(i*.45)*28,1+Math.abs(Math.sin(i*.3))*3.2));
+$('kg6').innerHTML=[['Terpusat','Titik mengumpul di satu pusat',G.pyr()],['Menyebar','Titik tersebar di seluruh bidang',G.rand(5)],['Berulang','Pola yang diulang teratur',G.grid()],['Geometris','Tertata mengikuti bentuk dasar',G.rows()],['Organik','Mengalir seperti bentuk alam',G.org()],['Gradasi','Ukuran dan nilai berubah bertahap',G.color()]].map(card).join('');
+const K4=[
+['Minimalis','Sedikit titik, banyak ruang kosong',(seed=4,Q(9,i=>D(20+rnd()*160,15+rnd()*70,1+rnd()*2))+D(150,38,9))],
+['Geometris','Titik tertata pada bentuk dasar',Q(4,k=>Q((k+1)*6,i=>D(100+(k+1)*11*Math.cos(i/((k+1)*6)*6.283),50+(k+1)*11*Math.sin(i/((k+1)*6)*6.283),1+k*.5)))],
+['Abstrak','Gugus titik tanpa bentuk nyata',(seed=8,Q(46,i=>{const c=i%2;return D((c?140:60)+(rnd()-.5)*70*rnd(),(c?62:38)+(rnd()-.5)*60*rnd(),.8+rnd()*3.4)}))],
+['Organik','Titik mengalir seperti bentuk alam',(()=>{let s='';for(let t=0;t<14;t+=.35){const r=2+t*3;s+=D(100+r*Math.cos(t)*1.5,50+r*Math.sin(t),.8+t*.22)}return s})()]
+];
+$('kr4').innerHTML=K4.map(card).join('');
+/* gradasi */
+let gr='';for(let r=0;r<5;r++){let x=14;for(let c=0;c<14;c++){x+=22-c*.9;gr+=D(x*1.2,14+r*20+c*.6,.7+c*.28,.3+c*.055)}}
+$('gd').innerHTML=SV(gr,'400 110');
+
+/* pointilisme */
+$('p1').innerHTML=SV(G.grid());
+seed=9;const pal=['#e07a3f','#d9c9a8','#6c7b86','#c9a24a','#8fa3ad'];let pp='';
+for(let i=0;i<190;i++){const a=rnd()*6.283,r=Math.sqrt(rnd())*42;pp+=`<circle cx="${(100+r*Math.cos(a)*1.6).toFixed(1)}" cy="${(50+r*Math.sin(a)).toFixed(1)}" r="${(1.2+rnd()*1.6).toFixed(1)}" fill="${pal[i%5]}"/>`}
+$('p2').innerHTML=SV(pp);
+
+/* daftar isi, simpan, tema */
+const links=[...ROOT.querySelectorAll('#toc a')];
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(l=>l.classList.toggle('on',l.hash==='#'+e.target.id))}),{rootMargin:'-20% 0px -70% 0px'});
+ROOT.querySelectorAll('.sec').forEach(s=>io.observe(s));
+$('save').onclick=function(){const on=this.dataset.on!=='1';this.dataset.on=on?'1':'0';this.textContent=on?'♥ Tersimpan':'♡ Simpan';this.style.color=on?'#e63946':''};
+$('tg').onclick=NirmanaToggleTheme;
+
+}
+/* ===== halaman: garis ===== */
+function init_garis(ROOT){
+
+const $=id=>ROOT.getElementById(id);
+const V=(vb,inner,st='')=>`<svg viewBox="0 0 ${vb}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${st}>${inner}</svg>`;
+const L=(a,b,c,d,w=2,x='')=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke-width="${w}" ${x}/>`;
+const P=(d,w=2.5)=>`<path d="${d}" stroke-width="${w}"/>`;
+const Q=(n,f)=>[...Array(n).keys()].map(f).join('');
+
+let dash=0;
+function play(){
+  const l=+$('pl').value,a=+$('pa').value*Math.PI/180,w=+$('pw').value,h=l/100*180;
+  const dx=Math.cos(a)*h,dy=Math.sin(a)*h;
+  $('play').innerHTML=V('400 120',L(200-dx,60+dy,200+dx,60-dy,w,dash?`stroke-dasharray="${w*2+8} ${w+8}"`:''));
+  const t=[Math.abs(a)>=.26?'Dinamis':'Tenang'];
+  if(w>=10)t.push('Tegas');else if(w<=2)t.push('Lembut');
+  if(l<40)t.push('Ringan');
+  if(dash)t.push('Tidak kontinu');
+  $('out').innerHTML='Kesan yang muncul: <b>'+t.join(' · ')+'</b>';
+}
+['pl','pa','pw'].forEach(i=>$(i).oninput=play);
+ROOT.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{
+  dash=+b.dataset.d;ROOT.querySelectorAll('[data-d]').forEach(x=>x.classList.toggle('fill',x===b));play();
+});
+play();
+
+let sp='';
+for(let t=0;t<12.6;t+=.3){const r=2+t*1.9;sp+=(sp?'L':'M')+(60+r*Math.cos(t)).toFixed(1)+' '+(30+r*Math.sin(t)).toFixed(1)}
+const J=[['Lurus','stabil',L(8,30,112,30,3),'170,215,240'],['Lengkung','lembut',P('M8 30q13 -24 26 0t26 0t26 0t26 0'),'180,230,215'],
+['Patah','tegang','<polyline points="8,42 30,14 52,36 74,12 96,34 112,20" stroke-width="2.5"/>','205,190,245'],
+['Zigzag','aktif','<polyline points="8,46 24,14 40,46 56,14 72,46 88,14 104,46" stroke-width="2.5"/>','250,215,170'],['Spiral','memusat',P(sp,2),'200,205,245']];
+const cardHTML=a=>`<div class="card" style="--t:${a[3]}"><div class="tile">${V('120 60',a[2])}</div><b>${a[0]}</b><span>${a[1]}</span></div>`;
+$('jg').innerHTML=J.map(cardHTML).join('');
+
+const K=[['Dinamis','arah diagonal',L(10,50,110,10,3),'190,235,190'],['Tenang','garis horizontal',L(10,30,110,30,3),'170,215,240'],
+['Tegas','tebal &amp; kontras',L(10,30,110,30,12),'205,190,245'],['Lembut','kurva tipis',P('M10 44Q60 -8 110 30',1.5),'250,215,170'],
+['Berat','massa rapat',Q(6,i=>L(10,12+i*7,110,12+i*7,3)),'180,230,215'],['Ringan','jarak lapang',L(10,10,110,10,1)+L(10,50,110,50,1),'200,205,245']];
+$('kg').innerHTML=K.map(cardHTML).join('');
+
+const R=[['Reguler',i=>[20,2]],['Bebas',i=>[[0,15,40][i%3],1.8]],['Progresif',i=>[i*4.5,1.5+i*.35]]];
+$('ir').innerHTML=R.map(r=>`<div class="lab">${r[0]}</div>`+V('600 50',Q(11,i=>{
+  const [d,w]=r[1](i),a=d*Math.PI/180,c=30+i*54,x=Math.cos(a)*19,y=Math.sin(a)*19;
+  return L(c-x,25-y,c+x,25+y,w)}),'style="height:46px"')).join('');
+
+$('rp').innerHTML=V('320 160',Q(17,i=>{const x=10+i*17;return i==9?L(x+30,10,x,150,6,'stroke="#e63946"'):L(x+30,10,x,150,1.6)}));
+$('gd').innerHTML=V('320 160',Q(21,i=>{const x=10+i*15,h=75-i*1.6;return L(x,80-h,x,80+h,1+i*.18,`opacity="${(1-i*.025).toFixed(2)}"`)}));
+$('ck').innerHTML=V('400 240',[40,170,290].map(a=>Q(19,i=>L(a,8,20+i*20,232,1+(i%3)*.9,`opacity="${i%3==1?.5:.95}"`))).join(''));
+
+const HT=[16,58,100,143,185,227,269,311,353,395,437],HB=[474,454,433,413,393,372,351,330,312,291,272];
+$('hv').innerHTML=V('490 670',HT.map((x,i)=>L(x,15,HB[i],652,1.2+i*.75,i&&i%3==0?'opacity=".55"':'')).join(''));
+
+const links=[...ROOT.querySelectorAll('#toc a')],secs=[...ROOT.querySelectorAll('.sec')];
+let lock=null;
+function setOn(id){links.forEach(l=>l.classList.toggle('on',l.hash==='#'+id))}
+function spy(){
+  if(lock)return;
+  let id=secs[0].id;
+  secs.forEach(s=>{if(s.getBoundingClientRect().top<=100)id=s.id});
+  if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4)id=secs[secs.length-1].id;
+  setOn(id);
+}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
+['wheel','touchmove','keydown'].forEach(e=>addEventListener(e,()=>{lock=null},{passive:true}));
+links.forEach(l=>l.addEventListener('click',()=>{lock=l.hash.slice(1);setOn(lock)}));
+spy();
+$('save').onclick=function(){const on=this.dataset.on!=='1';this.dataset.on=on?'1':'0';this.textContent=on?'♥ Tersimpan':'♡ Simpan';this.style.color=on?'#e63946':''};
+$('tg').onclick=NirmanaToggleTheme;
+
+}
+/* ===== halaman: bidang ===== */
+function init_bidang(ROOT){
+
+const $=id=>ROOT.getElementById(id);
+const Q=(n,f)=>[...Array(n).keys()].map(f).join('');
+const rad=d=>d*Math.PI/180;
+const V=(vb,inner,st='')=>`<svg viewBox="0 0 ${vb}" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" ${st}>${inner}</svg>`;
+const FI='fill="currentColor" stroke="none"';
+
+/* bentuk dalam koordinat polar */
+const SH={
+ lingkaran:{n:'Lingkaran',k:'bergerak',f:t=>1},
+ persegi:{n:'Persegi',k:'stabil',f:t=>.85/Math.max(Math.abs(Math.cos(t)),Math.abs(Math.sin(t)))},
+ segitiga:{n:'Segitiga',k:'terarah',f:t=>.62/Math.max(...[270,30,150].map(a=>Math.cos(t-rad(a))))},
+ organik:{n:'Organik',k:'mengalir dan hidup (biomorphic)',f:t=>.82+.2*Math.sin(3*t+.6)+.12*Math.sin(5*t+2)},
+ abstrak:{n:'Abstrak',k:'tidak beraturan (non-objective)',f:t=>.7+.3*Math.abs(Math.sin(2.5*t+.5))+.12*Math.sin(7*t+1)}
+};
+Object.values(SH).forEach(s=>{let a=0;for(let i=0;i<360;i++){const r=s.f(rad(i));a+=r*r/2*rad(1)}s.a=.8/Math.sqrt(a/Math.PI)});
+const rr=(k,t)=>SH[k].f(t)*SH[k].a;
+const PT=(r,cx,cy,sc,rot)=>Q(120,i=>{const t=i/120*2*Math.PI,q=r(t)*sc;return `${(cx+q*Math.cos(t+rot)).toFixed(1)},${(cy-q*Math.sin(t+rot)).toFixed(1)} `});
+const AREA=r=>{let a=0;for(let i=0;i<360;i++){const q=r(rad(i));a+=q*q/2*rad(1)}return a};
+
+/* hero: komposisi bentuk dasar */
+$('hv').innerHTML=`<svg viewBox="0 0 300 300" aria-hidden="true"><circle cx="110" cy="120" r="80" fill="#e0652f"/><rect x="150" y="45" width="110" height="110" fill="currentColor" transform="rotate(18 205 100)"/><polygon points="140,290 215,160 290,290" fill="#9dab8f"/><rect x="14" y="246" width="190" height="12" fill="#e6b43c"/><circle cx="235" cy="60" r="18" fill="none" stroke="currentColor" stroke-width="3"/></svg>`;
+
+/* studio */
+let sk='persegi',pn='p';
+$('sb').innerHTML=Object.keys(SH).map(k=>`<button class="kb${k==sk?' on':''}" data-k="${k}">${SH[k].n}</button>`).join('');
+function studio(){
+  const U=+$('su').value,R=rad(+$('sr').value),F=+$('sf').value/100,W=F*380,H=F*220,sc=U/100*Math.min(W,H)/2/1.3;
+  const pos=pn=='p';
+  $('sp').innerHTML=`<svg viewBox="0 0 400 240" aria-hidden="true"><rect x="${200-W/2}" y="${120-H/2}" width="${W}" height="${H}" rx="6" stroke="currentColor" stroke-width="1.5" style="fill:${pos?'var(--tile)':'currentColor'}"/><polygon points="${PT(t=>rr(sk,t),200,120,sc,R)}" stroke="none" style="fill:${pos?'currentColor':'var(--tile)'}"/></svg>`;
+  const pct=AREA(t=>rr(sk,t))*sc*sc/(W*H)*100;
+  const lbl=pct<12?'kecil':pct<30?'sedang':'besar dan dominan';
+  $('so').innerHTML=`<b>${SH[sk].n}</b> terasa ${SH[sk].k}. Luasnya <b>${pct.toFixed(0)}%</b> dari bingkai, jadi terasa ${lbl}. Ukuran bersifat nisbi: bentuk yang sama terasa besar di bingkai kecil dan kecil di bingkai besar.`;
+}
+ROOT.querySelectorAll('#sb .kb').forEach(b=>b.onclick=()=>{sk=b.dataset.k;ROOT.querySelectorAll('#sb .kb').forEach(x=>x.classList.toggle('on',x===b));studio()});
+ROOT.querySelectorAll('[data-pn]').forEach(b=>b.onclick=()=>{pn=b.dataset.pn;ROOT.querySelectorAll('[data-pn]').forEach(x=>x.classList.toggle('on',x===b));studio()});
+['su','sr','sf'].forEach(i=>$(i).oninput=studio);studio();
+
+const T=['240,110,70','157,171,143','233,223,201'];
+const C=(i,t,d,tile)=>`<div class="card" style="--t:${T[i%3]}">${tile?`<div class="tile">${tile}</div>`:''}<b>${t}</b>${d?`<span>${d}</span>`:''}</div>`;
+
+/* jenis */
+const blob=(cx,cy,s,p)=>`<polygon ${FI} points="${PT(t=>.8+.2*Math.sin(p[0]*t+p[1])+.12*Math.sin(p[2]*t+p[3]),cx,cy,s,0)}"/>`;
+const J=[
+ ['Geometris','Dibuat dari matematika: persegi yang stabil, segitiga yang terarah, lingkaran yang bergerak (rectilinear).',V('120 60',`<rect x="10" y="14" width="30" height="30" ${FI}/><polygon points="50,46 70,12 90,46" ${FI}/><circle cx="106" cy="30" r="14" ${FI}/>`)],
+ ['Organik','Dibatasi garis bebas dari bentuk hewan atau tumbuhan tertentu (biomorphic).',V('120 60',blob(28,30,22,[3,.6,5,2])+blob(62,30,22,[2,1.4,4,.3])+blob(97,30,22,[4,2.2,6,1.1]))],
+ ['Abstrak','Dibatasi garis lurus maupun lengkung yang tidak beraturan (non-objective).',V('120 60',`<path d="M8 40 C14 8 34 8 30 30 S46 54 52 24 L66 50 L74 14 C88 6 96 30 84 36 S104 56 112 22" stroke-width="2.5"/>`)]
+];
+$('jg').innerHTML=J.map((a,i)=>C(i,a[0],a[1],a[2])).join('');
+/* sifat */
+const CUBE=(x,y,s)=>`<g ${FI}><polygon points="${x},${y-s/2} ${x+s},${y-s} ${x+2*s},${y-s/2} ${x+s},${y}" opacity=".9"/><polygon points="${x},${y-s/2} ${x+s},${y} ${x+s},${y+s} ${x},${y+s/2}" opacity=".55"/><polygon points="${x+s},${y} ${x+2*s},${y-s/2} ${x+2*s},${y+s/2} ${x+s},${y+s}" opacity=".3"/></g>`;
+const S=[
+ ['Organik','Mengingatkan pada makhluk hidup.',V('120 60',blob(60,30,24,[3,.6,5,2]))],
+ ['Dwimatra (2D)','Panjang dan lebar saja, seperti gambar dan lukisan.',V('120 60',`<rect x="30" y="12" width="60" height="36" ${FI}/>`)],
+ ['Trimatra (3D)','Panjang, lebar, dan tinggi, seperti patung dan bangunan. Disebut juga gempal atau volume.',V('120 60',CUBE(38,34,22))],
+ ['Diam','Bentuk statis, seperti patung.',V('120 60',`<rect x="42" y="18" width="36" height="30" ${FI}/><line x1="20" y1="48" x2="100" y2="48" stroke-width="2"/>`)],
+ ['Bergerak','Bentuk kinetis, seperti mobil.',V('120 60',`<g ${FI}><rect x="20" y="20" width="28" height="22" opacity=".15"/><rect x="38" y="20" width="28" height="22" opacity=".35"/><rect x="56" y="20" width="28" height="22" opacity=".6"/><rect x="74" y="20" width="28" height="22"/></g>`)],
+ ['Berirama','Bentuk ritmis, pengulangan teratur.',V('120 60',Q(6,i=>`<rect x="${10+i*18}" y="${i%2?22:10}" width="12" height="${i%2?28:40}" ${FI}/>`))],
+ ['Agung &amp; abadi','Bentuk monumental pada bangunan dan patung.',V('120 60',`<g ${FI}><rect x="30" y="38" width="60" height="10"/><rect x="40" y="28" width="40" height="10"/><rect x="50" y="18" width="20" height="10"/><rect x="56" y="8" width="8" height="10"/></g>`)]
+];
+$('sg').innerHTML=S.map((a,i)=>C(i,a[0],a[1],a[2])).join('');
+
+/* metamorfosis */
+const MK=Object.keys(SH);
+[['ma','lingkaran'],['mb','persegi']].forEach(a=>{$(a[0]).innerHTML=MK.map(k=>`<option value="${k}"${k==a[1]?' selected':''}>${SH[k].n}</option>`).join('')});
+const MP=(m,cx,cy,sc)=>{const A=$('ma').value,B=$('mb').value;return `<polygon points="${PT(t=>(1-m)*rr(A,t)+m*rr(B,t),cx,cy,sc,0)}" fill="currentColor" stroke="none"/>`};
+function morph(){
+  const m=+$('mt').value/100;
+  $('mp').innerHTML=`<svg viewBox="0 0 400 200" style="color:var(--acc)" aria-hidden="true">${MP(m,200,100,78)}</svg>`;
+  $('th').innerHTML=[0,.25,.5,.75,1].map((t,i)=>`<div><svg viewBox="0 0 100 100" aria-hidden="true">${MP(t,50,50,38)}</svg>Tahap ${i+1}</div>`).join('');
+}
+['ma','mb','mt'].forEach(i=>$(i).oninput=morph);morph();
+
+/* menyusun bentuk */
+const A=(x,r=16)=>`<circle cx="${x}" cy="30" r="${r}"/>`;
+const U=[
+ ['Berjauhan','Ada jarak lebar di antara keduanya.',()=>`<g ${FI}>${A(24,14)}${A(96,14)}</g>`],
+ ['Berdekatan','Jarak sempit, hampir bertemu.',()=>`<g ${FI}>${A(44,14)}${A(76,14)}</g>`],
+ ['Bersentuhan','Hanya bertemu di satu titik.',()=>`<g ${FI}>${A(46,14)}${A(74,14)}</g>`],
+ ['Tumpang tindih','Saling menutup, kedua kontur tetap terlihat.',()=>`<g fill="currentColor" fill-opacity=".5" stroke-width="1">${A(48)}${A(72)}</g>`],
+ ['Exclude overlapping','Bagian yang bertumpuk dibuang.',()=>`<path ${FI} fill-rule="evenodd" d="M32 30a16 16 0 1 0 32 0a16 16 0 1 0 -32 0M56 30a16 16 0 1 0 32 0a16 16 0 1 0 -32 0"/>`],
+ ['Peleburan','Menyatu menjadi satu bentuk baru.',()=>`<g ${FI}>${A(48)}${A(72)}</g>`],
+ ['Pengikisan','Satu bentuk memotong bentuk lainnya.',u=>`<mask id="m${u}"><rect width="120" height="60" fill="#fff" stroke="none"/><circle cx="72" cy="30" r="16" fill="#000" stroke="none"/></mask><circle cx="48" cy="30" r="16" ${FI} mask="url(#m${u})"/><circle cx="72" cy="30" r="16" stroke-dasharray="3 3" stroke-width="1"/>`],
+ ['Intersect shape area','Hanya irisannya yang tersisa.',u=>`<clipPath id="c${u}"><circle cx="48" cy="30" r="16"/></clipPath><circle cx="72" cy="30" r="16" ${FI} clip-path="url(#c${u})"/><circle cx="48" cy="30" r="16" stroke-width="1"/><circle cx="72" cy="30" r="16" stroke-width="1"/>`],
+ ['Berimpitan','Sisi saling berhimpit tanpa celah.',()=>`<g ${FI}><rect x="34" y="16" width="26" height="28"/><rect x="60" y="16" width="26" height="28" fill-opacity=".5"/></g>`]
+];
+$('ug').innerHTML=U.map((a,i)=>C(i,`${i+1}. ${a[0]}`,a[1],V('120 60',a[2](i)))).join('');
+
+/* positif-negatif: vas Rubin */
+const RH=[[72,8],[70,16],[63,24],[60,29],[55,35],[58,40],[56,44],[59,48],[56,52],[60,58],[63,68],[70,88],[75,104],[76,112]];
+const VASE=RH.concat(RH.map(p=>[100-p[0],p[1]]).reverse()).map(p=>p.join(',')).join(' ');
+const vs=neg=>`<svg viewBox="0 0 100 120" aria-hidden="true" style="max-width:220px;margin:0 auto"><rect width="100" height="120" rx="6" style="fill:${neg?'currentColor':'var(--tile)'}"/><polygon points="${VASE}" stroke-width="1" stroke-linejoin="round" style="fill:${neg?'var(--tile)':'currentColor'};stroke:${neg?'var(--tile)':'currentColor'}"/></svg>`;
+$('v1').innerHTML=vs(false)+'<p class="sm2" style="text-align:center">Hitam di atas putih.</p>';
+$('v2').innerHTML=vs(true)+'<p class="sm2" style="text-align:center">Bagian putihnya: ruang negatif.</p>';
+
+/* irama bidang */
+$('i1').innerHTML=V('300 40',`<rect x="10" y="10" width="280" height="20" ${FI}/>`);
+$('i2').innerHTML=V('300 60',[16,2,8,16,22,22].map((y,i)=>`<rect x="${10+i*48}" y="${y+10}" width="34" height="24" ${FI}/>`).join(''));
+$('i3').innerHTML=V('300 70',Q(6,i=>{const x=30+i*46,y=44-Math.sin(i/5*Math.PI)*24;return `<rect x="${x-14}" y="${y-14}" width="28" height="28" ${FI} transform="rotate(${-10+i*14} ${x} ${y})"/>`}));
+
+/* op-art */
+function op(){
+  const k=+$('ok').value/100,n=16,P=(i,j)=>{const u=i/n*2-1,v=j/n*2-1,f=1-k*(u*u+v*v);return `${(100+u*f*92).toFixed(1)},${(100+v*f*92).toFixed(1)}`};
+  let s='';for(let i=0;i<n;i++)for(let j=0;j<n;j++)if((i+j)%2==0)s+=`<polygon points="${P(i,j)} ${P(i+1,j)} ${P(i+1,j+1)} ${P(i,j+1)}"/>`;
+  $('op').innerHTML=`<svg viewBox="0 0 200 200" aria-hidden="true"><rect width="200" height="200" rx="8" stroke="none" style="fill:var(--tile)"/><g ${FI}>${s}</g></svg>`;
+}
+$('ok').oninput=op;op();
+
+/* prinsip */
+const sq=(x,y,s,o=1)=>`<rect x="${x}" y="${y}" width="${s}" height="${s}" ${FI}${o<1?` opacity="${o}"`:''}/>`;
+const ci=(x,y,r,o=1)=>`<circle cx="${x}" cy="${y}" r="${r}" ${FI}${o<1?` opacity="${o}"`:''}/>`;
+const PR=[
+ ['Keseimbangan simetris','Kiri dan kanan sama persis dalam raut, ukuran, arah, warna, dan tekstur.',`<rect x="22" y="14" width="26" height="32" ${FI}/><rect x="72" y="14" width="26" height="32" ${FI}/><line x1="60" y1="6" x2="60" y2="54" stroke-dasharray="3 3" stroke-width="1"/>`],
+ ['Keseimbangan memancar','Pola sama ke kiri-kanan dan atas-bawah, memancar dari pusat.',Q(8,i=>ci(60+Math.cos(i*Math.PI/4)*22,30+Math.sin(i*Math.PI/4)*22,5))+ci(60,30,8)],
+ ['Keseimbangan sederajat','Besar kedua sisi setara tanpa memperhatikan bentuknya.',ci(34,30,17)+ci(84,18,8.5)+ci(98,38,8.5)+ci(74,42,8.5)],
+ ['Keseimbangan tersembunyi','Berbeda besaran dan raut, tetapi tetap seimbang.',`<circle cx="36" cy="30" r="20" stroke-width="2"/>${sq(80,22,16)}`],
+ ['Irama: repetisi','Pengulangan unsur yang sama.',Q(6,i=>sq(10+i*18,22,12))],
+ ['Irama: transisi','Perubahan bertahap antarunsur.',Q(6,i=>sq(8+i*18,30-(6+i*1.6)/2,6+i*1.6))],
+ ['Irama: oposisi','Pengulangan yang saling berlawanan.',Q(6,i=>i%2?ci(16+i*18,30,9):sq(10+i*18,24,12))],
+ ['Dominasi','Satu unsur unggul menarik perhatian.',Q(7,i=>i==3?'':ci(12+i*16,30,5))+`<circle cx="60" cy="30" r="13" fill="#e0652f" stroke="none"/>`]
+];
+$('pg').innerHTML=PR.map((a,i)=>C(i,a[0],a[1],V('120 60',a[2]))).join('');
+$('ps').innerHTML=V('240 70',`<rect x="10" y="30" width="24" height="16" ${FI}/><rect x="48" y="22" width="48" height="32" ${FI}/><rect x="110" y="10" width="96" height="64" ${FI} transform="scale(1 .9)"/>`);
+
+/* daftar isi, simpan, tema */
+const links=[...ROOT.querySelectorAll('#toc a')],secs=[...ROOT.querySelectorAll('.sec')];
+let lock=null;
+function setOn(id){links.forEach(l=>l.classList.toggle('on',l.hash==='#'+id))}
+function spy(){
+  if(lock)return;
+  let id=secs[0].id;
+  secs.forEach(s=>{if(s.getBoundingClientRect().top<=100)id=s.id});
+  if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4)id=secs[secs.length-1].id;
+  setOn(id);
+}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
+['wheel','touchmove','keydown'].forEach(e=>addEventListener(e,()=>{lock=null},{passive:true}));
+links.forEach(l=>l.addEventListener('click',()=>{lock=l.hash.slice(1);setOn(lock)}));
+spy();
+$('save').onclick=function(){const on=this.dataset.on!=='1';this.dataset.on=on?'1':'0';this.textContent=on?'♥ Tersimpan':'♡ Simpan';this.style.color=on?'#e63946':''};
+$('tg').onclick=NirmanaToggleTheme;
+
+}
+/* ===== halaman: warna ===== */
+function init_warna(ROOT){
+
+const $=s=>ROOT.querySelector(s),$$=s=>[...ROOT.querySelectorAll(s)];
+/* hero dots */
+let h='';for(let i=1;i<=130;i++){const r=10.5*Math.sqrt(i),a=i*2.39996,x=130+r*Math.cos(a),y=130+r*Math.sin(a),hu=(Math.atan2(y-130,x-130)*180/Math.PI+360)%360;h+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1.8+r/120*6).toFixed(1)}" fill="hsl(${hu.toFixed(0)} 75% 50%)"/>`}
+$('#hero').innerHTML=h;
+/* theme + share */
+$('#th').onclick=NirmanaToggleTheme;
+$('#sh').onclick=async e=>{try{await navigator.clipboard.writeText(location.href);e.target.textContent='Tertaut'}catch(x){e.target.textContent='Salin dari alamat'}};
+/* additive / subtractive */
+const NM={ad:{b:'Biru',g:'Hijau',r:'Merah',bg:'Sian',br:'Magenta',gr:'Kuning',bgr:'Putih',_:'Gelap (tanpa cahaya)'},su:{c:'Sian',m:'Magenta',y:'Kuning',cm:'Biru',my:'Merah',cy:'Hijau',cmy:'Hitam (hampir)',_:'Putih (kertas polos)'}};
+function mixer(id,st,rs){const box=$('#'+id),up=()=>{const k=$$('#'+id+' .on').map(b=>b.dataset.k).sort().join('');$('#'+rs).innerHTML='Hasil campuran: <b>'+(NM[id][k]||NM[id]._)+'</b>'};
+$$('#'+id+' button').forEach(b=>b.onclick=()=>{b.classList.toggle('on');$('#'+st+' .'+b.dataset.k).classList.toggle('on');up()});up()}
+mixer('ad','sa','ra');mixer('su','ss','rs');
+/* dimensi */
+function dim(){const c=`hsl(${$('#h').value} ${$('#s').value}% ${$('#l').value}%)`;$('#hue').style.background=c;$('#hr').innerHTML=`Hue <b>${$('#h').value}°</b> · Value <b>${$('#l').value}%</b> · Chroma <b>${$('#s').value}%</b>`}
+$$('#h,#l,#s').forEach(i=>i.oninput=dim);dim();
+/* pencampuran */
+const N={K:['Kuning','#f5d90a'],M:['Merah','#e11d48'],B:['Biru','#29a8e0'],H:['Hijau','#3aa83a'],J:['Jingga','#f07a1a'],U:['Ungu','#8a4fb0'],CK:['Coklat kuning','#b8a03c'],CM:['Coklat merah','#a8503a'],CB:['Coklat biru','#3d5a8c'],CJ:['Coklat jingga','#8c4b2f'],CH:['Coklat hijau','#5f6b55'],CU:['Coklat ungu','#55405a'],KH:['Kuning hijau','#b7e12b'],KJ:['Kuning jingga','#fbb800'],MJ:['Merah jingga','#ef4a1e'],MU:['Merah ungu','#c0267f'],BU:['Biru violet','#5b5fe0'],BH:['Biru hijau','#0f8f8f']};
+const sw=k=>`<span class="sw" style="background:${N[k][1]}" title="${N[k][0]}"></span>`;
+const G=[['Sekunder = 2 primer',[['H','B','K'],['J','K','M'],['U','M','B']]],['Tersier = 2 sekunder',[['CK','J','H'],['CM','J','U'],['CB','H','U']]],['Kuarter = 2 tersier',[['CJ','CK','CM'],['CH','CK','CB'],['CU','CB','CM']]]];
+$('#mix').innerHTML=G.map(([t,r])=>`<div class="card" style="padding:8px"><b style="font-size:13px;margin:4px 6px;display:block">${t}</b>`+r.map(([x,a,b])=>`<div class="eq">${sw(a)}+${sw(b)}=${sw(x)}<span class="t">${N[x][0]}</span></div>`).join('')+'</div>').join('');
+/* klasifikasi */
+const KL=[['Primer','Disebut pokok karena tidak dapat dibentuk dari warna lain.',['B','M','K']],['Sekunder','Warna kedua, hasil campuran dua warna primer.',['J','U','H']],['Intermediate','Warna perantara, ada di antara warna primer dan sekunder pada lingkaran warna.',['KH','KJ','MJ','MU','BU','BH']],['Tersier','Warna ketiga, hasil campuran dua warna sekunder.',['CK','CM','CB']],['Kuarter','Warna keempat, hasil campuran dua warna tersier.',['CJ','CH','CU']]];
+$('#kl').innerHTML=KL.map(([t,d,m])=>`<div class="card"><h3>${t}</h3><p>${d}</p><div style="margin-top:6px">${m.map(k=>`<span class="pill">${sw(k)}${N[k][0]}</span>`).join('')}</div></div>`).join('');
+/* roda warna */
+const W=['K','KH','H','BH','B','BU','U','MU','M','MJ','J','KJ'],WARM=['MU','M','MJ','J','KJ','K','KH'];
+let wp='';W.forEach((k,i)=>{const a=(i*30-105)*Math.PI/180,b=a+28*Math.PI/180,p=(r,t)=>`${(160+r*Math.cos(t)).toFixed(1)} ${(160+r*Math.sin(t)).toFixed(1)}`,m=(a+b)/2;
+wp+=`<g data-k="${k}"><path d="M${p(150,a)}A150 150 0 0 1 ${p(150,b)}L${p(75,b)}A75 75 0 0 0 ${p(75,a)}Z" fill="${N[k][1]}"/><text x="${160+112*Math.cos(m)}" y="${160+112*Math.sin(m)+4}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff" stroke="rgba(0,0,0,.5)" stroke-width="2.5" paint-order="stroke">${k}</text></g>`});
+$('#wheel').innerHTML=wp+'<text id="wc" x="160" y="165" text-anchor="middle" font-size="13" fill="currentColor">12 warna</text>';
+$$('#wheel g').forEach(g=>{g.onmouseenter=g.onfocus=()=>$('#wc').textContent=N[g.dataset.k][0];g.onmouseleave=()=>$('#wc').textContent='12 warna'});
+$$('#wf button').forEach(b=>b.onclick=()=>{$$('#wf button').forEach(x=>x.classList.toggle('p',x===b));$$('#wheel g').forEach(g=>{const w=WARM.includes(g.dataset.k),f=b.dataset.f;g.style.opacity=f==='all'||(f==='w')===w?1:.15})});
+/* arti warna */
+const A=[['Merah','#e11d48','Cepat, energik, gairah, berani, agresif, panas','Lambang keberanian, kemarahan, dan kekuatan. Merah muda berarti kesehatan, kebugaran, dan harum bunga mawar.'],['Biru','#29a8e0','Dingin, pasif, tenang, melankoli, berkesan jauh dan mendalam','Berasosiasi dengan air, laut, langit. Melambangkan keagungan, keyakinan, kesetiaan, kebenaran, kecerdasan, perdamaian, kepercayaan.'],['Kuning','#f5d90a','Terang, hangat, gembira, ramah, riang','Energi, keceriaan, kejayaan, kemuliaan. Kuning tua dan kuning kehijauan berasosiasi dengan sakit, penakut, dan iri.'],['Hijau','#3aa83a','Segar, muda, hidup, tumbuh','Berasosiasi dengan alam dan tumbuhan. Melambangkan kesuburan, kesetiaan, keabadian, kebangkitan, pengharapan.'],['Jingga','#f07a1a','Dorongan, semangat merdeka, anugerah, tetapi juga bahaya','Bisa menimbulkan sakit kepala, memengaruhi saraf, dan memicu nafsu makan. Mengingatkan pada buah jeruk sehingga menambah kesan manis pada makanan. Berkesan murah, lazim untuk pengumuman obral.'],['Ungu','#8a4fb0','Keangkuhan, kebesaran, kekayaan','Lambang kejayaan, keningratan, kebijaksanaan, pencerahan. Bisa juga berarti kekejaman, arogansi, duka cita, dan keeksotisan.'],['Putih','#ffffff','Paling terang, positif, cerah, tegas, mengalah','Melambangkan cahaya, kesucian, kemurnian, kejujuran, ketulusan, kebersihan, kesederhanaan, kehormatan.'],['Hitam','#111111','Formal, serius, tegas, praktis','Juga berkesan sedih, ramping, dan seksi.'],['Abu-abu','#8a8a99','Ketenangan atau ledakan emosi, kemurungan, tidak ceria','Pertanggungjawaban dan keamanan. Perak berarti kemewahan dan teknologi tinggi. Terkait kedokteran, keperawatan, farmasi.'],['Coklat','#8c5a3c','Warna tanah, natural, kedekatan hati','Sopan, arif, bijaksana, hemat, hormat, tetapi memberi kesan kurang bersih.']];
+$('#ac').innerHTML=A.map((a,i)=>`<button class="btn" data-i="${i}"><span class="sw" style="background:${a[1]};width:14px;height:14px;margin-right:6px"></span>${a[0]}</button>`).join('');
+function art(i){$$('#ac button').forEach((b,j)=>b.classList.toggle('on',i===j));const a=A[i];$('#ad2').innerHTML=`<div style="display:flex;gap:12px;align-items:center"><span class="sw" style="background:${a[1]};width:56px;height:56px"></span><div><h3 style="margin:0">${a[0]}</h3><p style="margin:0;font-size:13px;color:var(--mut)">${a[2]}</p></div></div><p style="margin-top:10px">${a[3]}</p>`}
+$$('#ac button').forEach(b=>b.onclick=()=>art(+b.dataset.i));art(0);
+/* toc */
+$('#up').onclick=e=>{e.preventDefault();scrollTo({top:0,behavior:'smooth'});$('.wrap').scrollIntoView({behavior:'smooth',block:'start'})};
+const SC=$$('section'),TA=$$('.toc a');
+function spy(){let i=0;SC.forEach((s,j)=>{if(s.getBoundingClientRect().top<=innerHeight*.35)i=j});if(innerHeight+scrollY>=document.documentElement.scrollHeight-8)i=SC.length-1;TA.forEach((a,j)=>a.classList.toggle('on',j===i))}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);spy();
+/* simpan */
+const sv=$('#sv'),HRT='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+function setSv(o){sv.classList.toggle('saved',o);sv.setAttribute('aria-pressed',o);sv.innerHTML=HRT+(o?'Tersimpan':'Simpan')}
+let sOn=false;try{sOn=localStorage.getItem('warna-saved')==='1'}catch(e){}
+setSv(sOn);sv.onclick=()=>{sOn=!sOn;setSv(sOn);try{localStorage.setItem('warna-saved',sOn?'1':'0')}catch(e){}};
+/* download pdf */
+$('#pd').onclick=async e=>{const b=e.currentTarget,t=b.textContent,fail=m=>{b.textContent=m;setTimeout(()=>b.textContent=t,2200)};
+const dl=window.claude?await claude.use('downloads'):null;if(!window.jspdf)return fail('PDF belum tersedia');
+const d=new jspdf.jsPDF({unit:'pt',format:'a4'}),X=56,W=d.internal.pageSize.getWidth()-2*X,H=d.internal.pageSize.getHeight()-56;let y=60;
+const add=(s,z,bd,g)=>{d.setFont('helvetica',bd?'bold':'normal');d.setFontSize(z);d.splitTextToSize(s,W).forEach(l=>{if(y>H){d.addPage();y=60}d.text(l,X,y);y+=z*1.45});y+=g};
+add('Warna',30,1,2);add('Mengenal pengertian, jenis, pencampuran, makna, dan penerapan warna dalam desain dua dimensi.',11,0,10);
+$$('section').forEach(s=>{add(s.querySelector('h2').textContent.replace(/^(\d+)/,'$1. '),17,1,2);const l=s.querySelector('.lead');l&&add(l.textContent,11,0,4);
+if(s.id==='campur')G.forEach(([n,r])=>{add(n,11,1,0);r.forEach(([x,a,c])=>add('- '+N[x][0]+' = '+N[a][0]+' + '+N[c][0],11,0,0))});
+if(s.id==='arti')A.forEach(a=>{add(a[0],12,1,0);add(a[2]+'. '+a[3],11,0,4)});
+s.querySelectorAll('.card:not(#ad2)').forEach(c=>{if(c.closest('#mix'))return;add(c.querySelector('h3').textContent,12,1,0);c.querySelectorAll('p').forEach(p=>add(p.textContent,11,0,0));const pl=[...c.querySelectorAll('.pill')].map(x=>x.textContent);pl.length&&add('Anggota: '+pl.join(', '),11,0,0);y+=4});y+=10});
+b.disabled=true;try{(dl?await dl.save({filename:'materi-warna.pdf',data:d.output('blob')}):d.save('materi-warna.pdf'))}catch(x){if(x&&x.code!=='declined')fail('Gagal mengunduh')}b.disabled=false};
+
+}
+/* ===== halaman: tekstur ===== */
+function init_tekstur(ROOT){
+
+const $=id=>ROOT.getElementById(id);
+const Q=(n,f)=>[...Array(n).keys()].map(f).join('');
+const V=(vb,inner)=>`<svg viewBox="0 0 ${vb}" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true">${inner}</svg>`;
+const L=(a,b,c,d,w=1.5)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke-width="${w}"/>`;
+const DOT=(x,y,r)=>`<circle cx="${x}" cy="${y}" r="${r}" fill="currentColor" stroke="none"/>`;
+
+const PRE={
+ halus:{n:'Halus · kaca',f:[.004,.004],o:1,t:'fractalNoise',s:.6,e:60,c:'#cfe0de',k:'Bersih, lembut, tenang'},
+ kasar:{n:'Kasar · batu',f:[.045,.045],o:4,t:'fractalNoise',s:7,e:50,c:'#8f8a82',k:'Kuat, alami, kokoh'},
+ licin:{n:'Licin · logam',f:[.003,.35],o:2,t:'fractalNoise',s:1.5,e:45,c:'#b7bbc2',k:'Modern, dingin, presisi'},
+ bergelombang:{n:'Bergelombang · kain',f:[.008,.02],o:2,t:'turbulence',s:9,e:50,c:'#9dab8f',k:'Lembut, mengalir, hangat'},
+ berpori:{n:'Berpori · spons',f:[.03,.03],o:2,t:'turbulence',s:8,e:40,c:'#e6b43c',k:'Ringan, organik, menyerap'},
+ berbulu:{n:'Berbulu · serat',f:[.015,.6],o:2,t:'fractalNoise',s:4,e:55,c:'#c8b497',k:'Hangat, lembut, nyaman'},
+ berbutir:{n:'Berbutir · pasir',f:[.75,.75],o:2,t:'fractalNoise',s:3,e:55,c:'#c9a679',k:'Alami, hangat, kering'},
+ berkerut:{n:'Berkerut · kulit buah',f:[.05,.05],o:3,t:'turbulence',s:6,e:45,c:'#e0762a',k:'Organik, hidup, segar'}
+};
+let uid=0;
+function TX(k,w,h,o={}){
+  const p=PRE[k],id='tx'+(++uid),c=o.color||p.c,s=o.s??p.s,fr=o.freq||1,az=o.az??45,real=o.real!==false;
+  const lit=real?`<feDiffuseLighting in="n" surfaceScale="${s}" diffuseConstant="1.15" lighting-color="#fff" result="l"><feDistantLight azimuth="${az}" elevation="${p.e}"/></feDiffuseLighting>`
+    :`<feColorMatrix in="n" values="1.5 0 0 0 -.2 1.5 0 0 0 -.2 1.5 0 0 0 -.2 0 0 0 0 1" result="l"/>`;
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><filter id="${id}" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="${p.t}" baseFrequency="${p.f[0]*fr} ${p.f[1]*fr}" numOctaves="${p.o}" seed="3" result="n"/>${lit}<feFlood flood-color="${c}" result="c"/><feBlend in="l" in2="c" mode="multiply"/></filter></defs><rect width="${w}" height="${h}" fill="${c}" filter="url(#${id})"/></svg>`;
+}
+
+$('hv').innerHTML=[['kasar','#e6dbc2'],['bergelombang','#a05a2c'],['bergelombang','#9dab8f'],['berpori','#c9b79a'],['berbutir','#e0652f']].map(a=>TX(a[0],100,300,{color:a[1]})).join('');
+
+let kind='kasar',mode='r',col='';
+const SW=[['','Asli'],['#e0652f','Terakota'],['#9dab8f','Sage'],['#e9dfc9','Krem'],['#3a3a36','Arang']];
+$('sws').innerHTML=SW.map((s,i)=>`<button class="sw${i?'':' on'}" data-c="${s[0]}" title="${s[1]}" style="${s[0]?`background:${s[0]}`:'background:var(--tile)'}">${s[0]?'':'A'}</button>`).join('');
+$('kb').innerHTML=Object.keys(PRE).map(k=>`<button class="kb${k==kind?' on':''}" data-k="${k}">${TX(k,90,50)}<span>${PRE[k].n}</span></button>`).join('');
+function studio(){
+  $('tp').innerHTML=TX(kind,600,230,{color:col||undefined,s:+$('ts').value,freq:+$('tf').value,az:+$('ta').value,real:mode=='r'});
+  $('out').innerHTML=`<b>${PRE[kind].n}</b> · kesan: ${PRE[kind].k}.<br>`+(mode=='r'?'Mode nyata: ada relief, jadi bayangan berubah saat arah cahaya digeser.':'Mode semu: permukaan datar, hanya gambar. Geser arah cahaya dan tidak ada yang berubah.');
+}
+ROOT.querySelectorAll('.kb').forEach(b=>b.onclick=()=>{kind=b.dataset.k;$('ts').value=PRE[kind].s;ROOT.querySelectorAll('.kb').forEach(x=>x.classList.toggle('on',x===b));studio()});
+ROOT.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{mode=b.dataset.m;ROOT.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('fill',x===b));studio()});
+ROOT.querySelectorAll('.sw').forEach(b=>b.onclick=()=>{col=b.dataset.c;ROOT.querySelectorAll('.sw').forEach(x=>x.classList.toggle('on',x===b));studio()});
+['ts','tf','ta'].forEach(i=>$(i).oninput=studio);
+studio();
+
+const T=['240,110,70','157,171,143','233,223,201'];
+const C=(i,t,d,tile)=>`<div class="card" style="--t:${T[i%3]}">${tile?`<div class="tile">${tile}</div>`:''}<b>${t}</b>${d?`<span>${d}</span>`:''}</div>`;
+$('kg').innerHTML=[['Permukaan','rata · bergerigi · berlekuk','kasar'],['Kehalusan','halus · sedang · kasar','halus'],['Pola','berulang · acak','bergelombang'],['Bentuk','geometris · organik','berpori'],['Kerapatan','rapat · jarang','berbutir'],['Kesan','hangat · dingin · lembut','berbulu']].map((a,i)=>C(i,a[0],a[1],TX(a[2],120,60))).join('');
+$('n1').innerHTML=TX('kasar',300,150,{s:8});$('n2').innerHTML=TX('kasar',300,150,{real:false});
+$('eg').innerHTML=['Lembut','Keras','Kasar','Halus','Alami','Modern','Organik','Kuat'].map((t,i)=>C(i,t)).join('');
+
+const IL=[
+ ['Arsiran','Garis rapat membangun gelap-terang.',V('120 60',Q(12,i=>L(8+i*9,54,26+i*9,8,.8+i*.14)))],
+ ['Gradasi','Transisi nilai menciptakan volume.',`<svg viewBox="0 0 120 60" aria-hidden="true"><defs><radialGradient id="rg" cx=".35" cy=".35" r=".8"><stop offset="0" stop-color="currentColor" stop-opacity=".1"/><stop offset="1" stop-color="currentColor" stop-opacity=".95"/></radialGradient></defs><circle cx="60" cy="30" r="25" fill="url(#rg)"/></svg>`],
+ ['Pola','Motif berulang membentuk ritme.',V('120 60',Q(4,r=>Q(8,c=>DOT(10+c*14+(r%2)*7,9+r*14,3.6))))],
+ ['Cetak + digital','Reproduksi memperluas variasi.',V('120 60',Q(4,r=>Q(10,c=>DOT(8+c*11.5,9+r*14,.8+c*.28))))]
+];
+$('ig').innerHTML=IL.map((a,i)=>C(i,a[0],a[1],a[2])).join('');
+
+$('b3').innerHTML=[['berbutir',60,'#c9a679'],['bergelombang',30,'#9dab8f'],['berkerut',10,'#e0652f']].map(a=>`<div style="flex:${a[1]}">${TX(a[0],a[1]*6,46,{color:a[2]})}</div>`).join('');
+
+let done=0;
+$('cb').innerHTML=Q(6,i=>`<button class="cb" data-i="${i}">Sampel ${i+1}</button>`);
+function cnt(){$('cn').textContent=done+' dari 6 sampel selesai'+(done==6?'. Bagus! Sekarang bandingkan hasilnya.':'.')}
+ROOT.querySelectorAll('.cb').forEach(b=>b.onclick=()=>{b.classList.toggle('on');done=ROOT.querySelectorAll('.cb.on').length;cnt()});cnt();
+
+const links=[...ROOT.querySelectorAll('#toc a')],secs=[...ROOT.querySelectorAll('.sec')];
+let lock=null;
+function setOn(id){links.forEach(l=>l.classList.toggle('on',l.hash==='#'+id))}
+function spy(){
+  if(lock)return;
+  let id=secs[0].id;
+  secs.forEach(s=>{if(s.getBoundingClientRect().top<=100)id=s.id});
+  if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4)id=secs[secs.length-1].id;
+  setOn(id);
+}
+addEventListener('scroll',spy,{passive:true});addEventListener('resize',spy);
+['wheel','touchmove','keydown'].forEach(e=>addEventListener(e,()=>{lock=null},{passive:true}));
+links.forEach(l=>l.addEventListener('click',()=>{lock=l.hash.slice(1);setOn(lock)}));
+spy();
+$('save').onclick=function(){const on=this.dataset.on!=='1';this.dataset.on=on?'1':'0';this.textContent=on?'♥ Tersimpan':'♡ Simpan';this.style.color=on?'#e63946':''};
+$('tg').onclick=NirmanaToggleTheme;
+
+}
+
+/* ===== router & tema ===== */
+const TITLES={
+  beranda:"Nirmana — Belajar Dasar Desain",
+  titik:"Titik — Nirmana",
+  garis:"Garis — Nirmana",
+  bidang:"Bidang & Bentuk — Nirmana",
+  warna:"Warna — Nirmana",
+  tekstur:"Tekstur — Nirmana"
+};
+const INIT={beranda:init_beranda, titik:init_titik, garis:init_garis, bidang:init_bidang, warna:init_warna, tekstur:init_tekstur};
+const htmlEl=document.documentElement,app=document.getElementById('app'),views={};
+let pending=null;
+const isRoute=h=>Object.prototype.hasOwnProperty.call(TITLES,h);
+const getRoute=()=>{const h=location.hash.slice(1);return isRoute(h)?h:'beranda'};
+
+/* tema: satu pengaturan untuk semua halaman */
+(function(){let t='dark';try{t=localStorage.getItem('theme')||'dark'}catch(e){}htmlEl.dataset.theme=t==='light'?'light':'dark'})();
+function NirmanaToggleTheme(){
+  const t=htmlEl.dataset.theme==='dark'?'light':'dark';
+  htmlEl.dataset.theme=t;try{localStorage.setItem('theme',t)}catch(e){}
+  Object.values(views).forEach(v=>v.host.dataset.theme=t);
+}
+
+function ensure(r){
+  if(views[r])return views[r];
+  const host=document.createElement('div');
+  host.className='view';host.id='v-'+r;host.dataset.theme=htmlEl.dataset.theme;
+  const sr=host.attachShadow({mode:'open'});
+  sr.appendChild(document.getElementById('tpl-'+r).content.cloneNode(true));
+  sr.addEventListener('click',onClick);
+  sr.addEventListener('keydown',e=>{if(e.key==='Enter'){const t=e.target.closest&&e.target.closest('[role="link"][data-go]');if(t)t.click()}});
+  app.appendChild(host);
+  views[r]={host,sr};
+  INIT[r](sr);
+  return views[r];
+}
+
+function render(){
+  const r=getRoute(),v=ensure(r);
+  Object.keys(views).forEach(k=>views[k].host.hidden=(k!==r));
+  document.title=TITLES[r];
+  const el=pending&&v.sr.getElementById(pending);pending=null;
+  if(el)el.scrollIntoView({block:'start',behavior:'instant'});
+  else scrollTo({top:0,left:0,behavior:'instant'});
+  requestAnimationFrame(()=>{dispatchEvent(new Event('scroll'));dispatchEvent(new Event('resize'))});
+}
+
+function go(r,sec){
+  pending=sec||null;
+  const cur=location.hash.slice(1);
+  if(cur===r||(r==='beranda'&&!cur))render();else location.hash=r;
+}
+
+function onClick(e){
+  const t=e.target.closest&&e.target.closest('[data-go],[data-top],a[href^="#"]');
+  if(!t)return;
+  e.preventDefault();
+  if(t.hasAttribute('data-top')){scrollTo({top:0});return}
+  if(t.dataset.go){go(t.dataset.go,t.dataset.sec);return}
+  const h=(t.getAttribute('href')||'').slice(1);
+  if(!h)return;
+  if(isRoute(h)){go(h);return}
+  const el=t.getRootNode().getElementById(h);
+  if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+addEventListener('hashchange',render);
+render();
+
+</script>
+</body>
+</html>
